@@ -73,6 +73,7 @@ public class AppConfig{
         configuration.setAllowedOrigins(Arrays.asList("https://5173-idx-movie-project-1717140701197.cluster-bs35cdu5w5cuaxdfch3hqqt7zm.cloudworkstations.dev"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

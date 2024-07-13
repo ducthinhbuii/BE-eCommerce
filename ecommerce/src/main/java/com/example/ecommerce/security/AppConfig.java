@@ -1,4 +1,5 @@
 package com.example.ecommerce.security;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.example.ecommerce.services.MyUserDetailServices;
 
@@ -37,16 +40,10 @@ public class AppConfig{
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
-        corsConfiguration.setAllowedOrigins(List.of("*"));
-        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PUT","OPTIONS","PATCH", "DELETE"));
-        corsConfiguration.setAllowCredentials(true);
-        // corsConfiguration.setExposedHeaders(List.of("Authorization", "Content-Type"));
 
         return  httpSecurity
-                .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
+                .cors(c -> c.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth ->
                         auth
                             .requestMatchers(HttpMethod.POST, "/api/user/login").permitAll()
@@ -68,6 +65,16 @@ public class AppConfig{
                 //     configure.accessDeniedPage("/access-denied")
                 // )
                 // .build();
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("https://5173-idx-movie-project-1717140701197.cluster-bs35cdu5w5cuaxdfch3hqqt7zm.cloudworkstations.dev"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean

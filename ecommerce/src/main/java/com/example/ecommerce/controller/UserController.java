@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -86,6 +88,16 @@ public class UserController {
     @GetMapping("")
     public ResponseEntity<List<Users>> getAllUsers(){
         return ResponseEntity.ok(this.userRepository.findAll());
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<Object> getUser(@AuthenticationPrincipal UserDetails currentUser) {
+        Optional<Users> user = userRepository.findByUsername(currentUser.getUsername());
+        if (user.isPresent()) {
+            return ResponseEntity.ok(user.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
     }
 
     @DeleteMapping("/{userName}")

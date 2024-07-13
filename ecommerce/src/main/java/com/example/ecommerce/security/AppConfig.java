@@ -53,18 +53,6 @@ public class AppConfig{
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(Customizer.withDefaults()).build();
-                // .formLogin( form ->
-                //     form
-                //         .loginPage("/showLoginPage")
-                //         .loginProcessingUrl("/authenticateTheUser")
-                //         .successHandler(new SavedRequestAwareAuthenticationSuccessHandler()) // Use SavedRequestAwareAuthenticationSuccessHandler
-                //         .permitAll()
-                // )
-                // .logout(logout -> logout.permitAll())
-                // .exceptionHandling(configure ->
-                //     configure.accessDeniedPage("/access-denied")
-                // )
-                // .build();
     }
 
     @Bean

@@ -48,6 +48,7 @@ public class AppConfig{
                         auth
                             .requestMatchers(HttpMethod.POST, "/api/user/login").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/order/").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/api/category/create-category").permitAll()
                             // .requestMatchers(HttpMethod.GET, "/").permitAll()
                             .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

@@ -21,6 +21,7 @@ public class CategoryController {
 
     @PostMapping("/create-category")
     public void createCategory(@RequestBody List<CategoryRequest> listReq){
+        System.out.println("create category");
         for(CategoryRequest categoryRequest : listReq){
             saveCategoryRecursive(categoryRequest, null, 1);
         }

@@ -17,7 +17,7 @@ public class CreateProductRequest {
     private String brand;
     private String color;
     private String imgUrl;
-    private Category category;
+    private String categoryId;
 
     private Set<Size> size = new HashSet<>();
     private String topLeverCategory;
@@ -81,11 +81,11 @@ public class CreateProductRequest {
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
     }
-    public Category getCategory() {
-        return category;
+    public String getCategoryId() {
+        return categoryId;
     }
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategory(String category) {
+        this.categoryId = category;
     }
     public Set<Size> getSize() {
         return size;

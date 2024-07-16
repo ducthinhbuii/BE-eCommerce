@@ -41,36 +41,38 @@ public class ProductImpService implements ProductService {
 
     @Override
     public Product createProduct(CreateProductRequest req){
-        Category topLevel = categoryRepository.findByName(req.getTopLeverCategory());
-        if(topLevel == null){
-            Category topLevelCategory = new Category();
-            topLevelCategory.setName(req.getTopLeverCategory());
-            topLevelCategory.setLevel(1);
+        Category category = categoryRepository.findByCategoryId(req.getCategoryId());
+        // Category topLevel = categoryRepository.findByName(req.getTopLeverCategory());
+        // if(topLevel == null){
+        //     Category topLevelCategory = new Category();
+        //     topLevelCategory.setName(req.getTopLeverCategory());
+        //     topLevelCategory.setLevel(1);
 
-            topLevel = categoryRepository.save(topLevelCategory);
+        //     topLevel = categoryRepository.save(topLevelCategory);
 
-        }
+        // }
 
-        Category secondLevel = categoryRepository.findByNameAndParent(req.getSecondLeverCategory(),topLevel.getName());
-        if(secondLevel == null){
-            Category secondLevelCategory = new Category();
-            secondLevelCategory.setName(req.getSecondLeverCategory());
-            secondLevelCategory.setCategoryParent(topLevel);
-            secondLevelCategory.setLevel(2);
+        // Category secondLevel = categoryRepository.findByNameAndParent(req.getSecondLeverCategory(),topLevel.getName());
+        // if(secondLevel == null){
+        //     Category secondLevelCategory = new Category();
+        //     secondLevelCategory.setName(req.getSecondLeverCategory());
+        //     secondLevelCategory.setCategoryParent(topLevel);
+        //     secondLevelCategory.setLevel(2);
 
-            secondLevel = categoryRepository.save(secondLevelCategory);
-        }
+        //     secondLevel = categoryRepository.save(secondLevelCategory);
+        // }
 
-        Category thirdLevel = categoryRepository.findByNameAndParent(req.getThirdLeverCategory(),secondLevel.getName());
-        if(thirdLevel == null){
-            Category thirdLevelCategory = new Category();
-            thirdLevelCategory.setName(req.getThirdLeverCategory());
-            thirdLevelCategory.setCategoryParent(secondLevel);
-            thirdLevelCategory.setLevel(3);
+        // Category thirdLevel = categoryRepository.findByNameAndParent(req.getThirdLeverCategory(),secondLevel.getName());
+        // if(thirdLevel == null){
+        //     Category thirdLevelCategory = new Category();
+        //     thirdLevelCategory.setName(req.getThirdLeverCategory());
+        //     thirdLevelCategory.setCategoryParent(secondLevel);
+        //     thirdLevelCategory.setLevel(3);
 
-            thirdLevel = categoryRepository.save(thirdLevelCategory);
-        }
+        //     thirdLevel = categoryRepository.save(thirdLevelCategory);
+        // }
         
+        System.out.println("create product");
         Product product = new Product();
         product.setName(req.getName());
         product.setColor(req.getColor());
@@ -79,20 +81,22 @@ public class ProductImpService implements ProductService {
         product.setDiscountPrice(req.getDiscountPrice());
         product.setImgUrl(req.getImgUrl());
         product.setPrice(req.getPrice());
-        product.setQuantity(req.getQuantity());
         product.setBrand(req.getBrand());
         product.setQuantity(req.getQuantity());
         product.setCreateAt(LocalDateTime.now());
-        product.setCategory(thirdLevel);
+        product.setCategory(category);
 
+        int quantity = 0;
         Set<Size> size = new HashSet<>();
         for(Size s: req.getSize()){
             Size temp = new Size();
             temp.setName(s.getName());
+            quantity += s.getQuantity();
             temp.setQuantity(s.getQuantity());
             sizeRepository.save(temp);
             size.add(temp);
         }
+        product.setQuantity(quantity);
         product.setSize(size);
 
         Product savedProduct = productRepository.save(product);

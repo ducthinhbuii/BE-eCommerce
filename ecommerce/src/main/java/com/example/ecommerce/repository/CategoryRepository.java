@@ -10,6 +10,7 @@ import com.example.ecommerce.model.Category;
 
 public interface CategoryRepository extends MongoRepository<Category, String>{
     Category findByName(String category);
+    Category findByCategoryId(String categoryId);
 
     @Query("{name: ?0, 'categoryParent.name': ?1}")
     Category findByNameAndParent(@Param("name") String name, @Param("parentCategoryName") String parentCategoryName);

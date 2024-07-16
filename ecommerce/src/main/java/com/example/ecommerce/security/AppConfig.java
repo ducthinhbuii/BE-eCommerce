@@ -49,6 +49,7 @@ public class AppConfig{
                             .requestMatchers(HttpMethod.POST, "/api/user/login").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/order/").permitAll()
                             .requestMatchers(HttpMethod.POST, "/api/category/create-category").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/api/product/**").permitAll()
                             // .requestMatchers(HttpMethod.GET, "/").permitAll()
                             .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -59,7 +60,7 @@ public class AppConfig{
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://5173-idx-movie-project-1717140701197.cluster-bs35cdu5w5cuaxdfch3hqqt7zm.cloudworkstations.dev"));
+        configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

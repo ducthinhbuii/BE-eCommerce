@@ -43,8 +43,8 @@ public class ProductController {
 
     @GetMapping("/")
     public ResponseEntity<List<Product>> getFilterProduct(@RequestParam(required = false) String category,@RequestParam(required = false) ArrayList<String> colors,@RequestParam(required = false) ArrayList<String> sizes,
-                                   @RequestParam(defaultValue = "0") int minPrice,@RequestParam(defaultValue = "1000") int maxPrice,@RequestParam(defaultValue = "0") int minDiscount,@RequestParam(required = false) String sort,@RequestParam(required = false) String stock,
-                                   @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize)
+                                   @RequestParam(required = false) Integer minPrice,@RequestParam(required = false) Integer maxPrice,@RequestParam(required = false) Integer minDiscount,@RequestParam(required = false) String sort,@RequestParam(required = false) String stock,
+                                   @RequestParam(required = false) Integer pageNumber, @RequestParam(required = false) Integer pageSize)
     {
         List<Product> products = productImpService.getAllProduct(category, colors, sizes, minPrice, maxPrice, minDiscount, sort, stock, pageNumber, pageSize);
         return ResponseEntity.ok(products);

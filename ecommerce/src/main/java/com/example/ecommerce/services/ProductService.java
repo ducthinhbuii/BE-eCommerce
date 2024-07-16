@@ -9,7 +9,7 @@ import com.example.ecommerce.request.CreateProductRequest;
 
 public interface ProductService {
 
-	public List<Product> fillterProducts(String category,int minPrice,int maxPrice,int minDiscount,String sort, int pageNumber, int pageSize);
+	public List<Product> fillterProducts(String category,Integer minPrice,Integer maxPrice,Integer minDiscount,String sort, Integer pageNumber, Integer pageSize);
 
 	public Product createProduct(CreateProductRequest req);
 
@@ -18,8 +18,8 @@ public interface ProductService {
 	Product findById(String theId);
 
 	public List<Product>getAllProduct(String category, ArrayList<String> colors, ArrayList<String> sizes,
-                                    int minPrice, int maxPrice, int minDiscount, String sort, String stock,
-                                    int pageNumber, int pageSize);
+                                    Integer minPrice, Integer maxPrice, Integer minDiscount, String sort, String stock,
+                                    Integer pageNumber, Integer pageSize);
 	
 	void save(Product theProduct);
 	

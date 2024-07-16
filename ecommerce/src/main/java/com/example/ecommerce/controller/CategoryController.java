@@ -2,9 +2,11 @@ package com.example.ecommerce.controller;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.ecommerce.model.Category;
@@ -17,6 +19,19 @@ public class CategoryController {
     private final CategoryRepository categoryRepository;
     public CategoryController(CategoryRepository categoryRepository){
         this.categoryRepository = categoryRepository;
+    }
+
+    @GetMapping("/get-all")
+    public List<Category> getAllCategory(){
+        return categoryRepository.findAll();
+    }
+
+    @GetMapping("/get-by-parent")
+    public Category getCategoryByNameAndParent(
+        @RequestParam(required = false) String categoyName,
+        @RequestParam(required = false) String categoyParentName
+        ){
+        return categoryRepository.findByNameAndParent(categoyName, categoyParentName);
     }
 
     @PostMapping("/create-category")

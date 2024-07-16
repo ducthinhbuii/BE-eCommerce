@@ -125,8 +125,8 @@ public class ProductImpService implements ProductService {
 
     @Override
     public List<Product>getAllProduct(String category, ArrayList<String> colors, ArrayList<String> sizes,
-                                    int minPrice, int maxPrice, int minDiscount, String sort, String stock,
-                                    int pageNumber, int pageSize)
+                                    Integer minPrice, Integer maxPrice, Integer minDiscount, String sort, String stock,
+                                    Integer pageNumber, Integer pageSize)
     {
         List<Product> products = fillterProducts(category, minPrice, maxPrice, minDiscount, sort, pageNumber, pageSize);
         if(colors != null){
@@ -166,14 +166,30 @@ public class ProductImpService implements ProductService {
     }
 
     @Override
-    public List<Product> fillterProducts(String category, int minPrice, int maxPrice, int minDiscount, String sort, int pageNumber, int pageSize) {
+    public List<Product> fillterProducts(String category, Integer minPrice, Integer maxPrice, Integer minDiscount, String sort, Integer pageNumber, Integer pageSize) {
+        System.out.println(category);
         Query query = new Query();
         if(category != null){
-            query.addCriteria(Criteria.where("category.name").is(category));
+            query.addCriteria(Criteria.where("category.categoryId").is(category));
         }
 
-        query.addCriteria(Criteria.where("discountPrice").gte(minPrice).lte(maxPrice));
-        query.addCriteria(Criteria.where("discountPercent").gte(minDiscount));
+        if (minPrice != null || maxPrice != null) {
+            Criteria priceCriteria = Criteria.where("discountPrice");
+
+            if (minPrice != null) {
+                priceCriteria = priceCriteria.gte(minPrice);
+            }
+
+            if (maxPrice != null && maxPrice > 0) {
+                priceCriteria = priceCriteria.lte(maxPrice);
+            }
+
+            query.addCriteria(priceCriteria);
+        }
+
+        if(minDiscount != null){
+            query.addCriteria(Criteria.where("discountPercent").gte(minDiscount));
+        }
 
         if("price_low".equalsIgnoreCase(sort)){
             query.with(Sort.by(Sort.Order.asc("discountPrice")));
@@ -182,8 +198,10 @@ public class ProductImpService implements ProductService {
             query.with(Sort.by(Sort.Order.desc("discountPrice")));
         }
 
-        int skip = pageNumber * pageSize;
-        query.skip(skip).limit(pageSize);
+        if(pageNumber != null && pageSize != null){
+            Integer skip = pageNumber * pageSize;
+            query.skip(skip).limit(pageSize);
+        }
         return mongoTemplate.find(query, Product.class);
     }
 }

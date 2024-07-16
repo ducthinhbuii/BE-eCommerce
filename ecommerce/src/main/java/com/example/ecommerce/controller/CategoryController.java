@@ -28,10 +28,10 @@ public class CategoryController {
 
     @GetMapping("/get-by-parent")
     public Category getCategoryByNameAndParent(
-        @RequestParam(required = false) String categoyName,
-        @RequestParam(required = false) String categoyParentName
+        @RequestParam(required = false) String categoryName,
+        @RequestParam(required = false) String categoryParentName
         ){
-        return categoryRepository.findByNameAndParent(categoyName, categoyParentName);
+        return categoryRepository.findByNameAndParent(categoryName, categoryParentName);
     }
 
     @PostMapping("/create-category")

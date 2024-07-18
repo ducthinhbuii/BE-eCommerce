@@ -41,7 +41,9 @@ public class ProductImpService implements ProductService {
 
     @Override
     public Product createProduct(CreateProductRequest req){
-        Category category = categoryRepository.findByCategoryId(req.getCategoryId());
+        List<Category> categories = categoryRepository.findByCategoryId(req.getCategoryId());
+        Category category = categories == null ? null : categories.get(0);
+        
         // Category topLevel = categoryRepository.findByName(req.getTopLeverCategory());
         // if(topLevel == null){
         //     Category topLevelCategory = new Category();

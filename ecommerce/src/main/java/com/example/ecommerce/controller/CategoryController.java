@@ -3,6 +3,7 @@ package com.example.ecommerce.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +33,11 @@ public class CategoryController {
         @RequestParam(required = false) String categoryParentName
         ){
         return categoryRepository.findByNameAndParent(categoryName, categoryParentName);
+    }
+
+    @GetMapping("/{categoryId}")
+    public Category getById(@PathVariable String categoryId){
+        return categoryRepository.findByCategoryId(categoryId);
     }
 
     @PostMapping("/create-category")

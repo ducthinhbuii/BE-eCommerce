@@ -36,7 +36,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{categoryId}")
-    public Category getById(@PathVariable String categoryId){
+    public List<Category> getById(@PathVariable String categoryId){
         return categoryRepository.findByCategoryId(categoryId);
     }
 

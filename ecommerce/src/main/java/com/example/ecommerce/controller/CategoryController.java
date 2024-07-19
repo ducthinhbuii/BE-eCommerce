@@ -27,6 +27,11 @@ public class CategoryController {
         return categoryRepository.findAll();
     }
 
+    @GetMapping("/get-top-cat")
+    public List<Category> getTopCategory(){
+        return categoryRepository.findTopCategory();
+    }
+
     @GetMapping("/get-by-parent")
     public Category getCategoryByNameAndParent(
         @RequestParam(required = false) String categoryName,

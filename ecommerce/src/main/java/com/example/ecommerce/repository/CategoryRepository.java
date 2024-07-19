@@ -14,6 +14,9 @@ public interface CategoryRepository extends MongoRepository<Category, String>{
     Category findByName(String category);
     List<Category> findByCategoryId(String categoryId);
 
+    @Query("{level: 1}")
+    List<Category> findTopCategory();
+
     @Query("{name: ?0, 'categoryParent.name': ?1}")
     Category findByNameAndParent(@Param("name") String name, @Param("parentCategoryName") String parentCategoryName);
 }

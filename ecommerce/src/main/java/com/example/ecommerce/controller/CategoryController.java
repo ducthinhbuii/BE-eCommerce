@@ -1,5 +1,6 @@
 package com.example.ecommerce.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,30 +47,33 @@ public class CategoryController {
     }
 
     @PostMapping("/create-category")
-    public void createCategory(@RequestBody List<CategoryRequest> listReq){
-        System.out.println("create category");
-        for(CategoryRequest categoryRequest : listReq){
-            saveCategoryRecursive(categoryRequest, null, 1);
+    public void createCategory(@RequestBody List<CategoryRequest> categoryRequests){
+        for (CategoryRequest categoryRequest : categoryRequests) {
+            saveCategoryRequest(categoryRequest, null, 1);
         }
     }
 
-    private void saveCategoryRecursive(CategoryRequest categoryRequest, Category parent, int level) {
+    private Category saveCategoryRequest(CategoryRequest categoryRequest, String categoryParentId, int level) {
         if(categoryRepository.findByName(categoryRequest.getName()) != null){
-            return;
+            return null;
         }
 
-        Category newCategory = new Category();
-        newCategory.setName(categoryRequest.getName());
-        newCategory.setLevel(level);
-        newCategory.setCategoryParent(parent);
+        Category category = new Category();
+        category.setName(categoryRequest.getName());
+        category.setCategoryParentId(categoryParentId);
+        category.setLevel(level);
 
-        Category savedCategory = categoryRepository.save(newCategory);
-        
-        if(categoryRequest.getChildren() != null){
-            for(CategoryRequest child : categoryRequest.getChildren()){
-                saveCategoryRecursive(child, savedCategory, level + 1);
+        category = categoryRepository.save(category);
+        if (categoryRequest.getChildren() != null) {
+            List<Category> children = new ArrayList<>();
+            for (CategoryRequest childRequest : categoryRequest.getChildren()) {
+                Category child = saveCategoryRequest(childRequest, category.getCategoryId(), level + 1);
+                children.add(child);
             }
+            category.setChildren(children);
+            categoryRepository.save(category);
         }
-        return;
+
+        return category;
     }
 }

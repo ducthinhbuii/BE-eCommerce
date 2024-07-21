@@ -1,6 +1,10 @@
 package com.example.ecommerce.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("category")
@@ -9,7 +13,26 @@ public class Category {
     private String categoryId;
     private String name;
     private int level;
-    private Category categoryParent;
+    private String categoryParentId;
+
+    @DBRef
+    private List <Category> children;
+
+    public String getCategoryParentId() {
+        return categoryParentId;
+    }
+
+    public void setCategoryParentId(String categoryParentId) {
+        this.categoryParentId = categoryParentId;
+    }
+
+    public List<Category> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Category> children) {
+        this.children = children;
+    }
     
     public Category() {
     }
@@ -38,12 +61,12 @@ public class Category {
         this.level = level;
     }
 
-    public Category getCategoryParent() {
-        return categoryParent;
+    public String getCategoryParent() {
+        return categoryParentId;
     }
 
-    public void setCategoryParent(Category categoryParent) {
-        this.categoryParent = categoryParent;
+    public void setCategoryParent(String categoryParent) {
+        this.categoryParentId = categoryParent;
     }
 
     

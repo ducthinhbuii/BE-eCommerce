@@ -14,6 +14,7 @@ public class Category {
     private String name;
     private int level;
     private String categoryParentId;
+    private String categoryParentName;
 
     @DBRef
     private List <Category> children;
@@ -67,6 +68,14 @@ public class Category {
 
     public void setCategoryParent(String categoryParent) {
         this.categoryParentId = categoryParent;
+    }
+
+    public String getCategoryParentName() {
+        return categoryParentName;
+    }
+
+    public void setCategoryParentName(String categoryParentName) {
+        this.categoryParentName = categoryParentName;
     }
 
     

@@ -49,11 +49,11 @@ public class CategoryController {
     @PostMapping("/create-category")
     public void createCategory(@RequestBody List<CategoryRequest> categoryRequests){
         for (CategoryRequest categoryRequest : categoryRequests) {
-            saveCategoryRequest(categoryRequest, null, 1);
+            saveCategoryRequest(categoryRequest, null, null, 1);
         }
     }
 
-    private Category saveCategoryRequest(CategoryRequest categoryRequest, String categoryParentId, int level) {
+    private Category saveCategoryRequest(CategoryRequest categoryRequest, String categoryParentId, String categoryParentName, int level) {
         if(categoryRepository.findByName(categoryRequest.getName()) != null){
             return null;
         }
@@ -61,13 +61,14 @@ public class CategoryController {
         Category category = new Category();
         category.setName(categoryRequest.getName());
         category.setCategoryParentId(categoryParentId);
+        category.setCategoryParentName(categoryParentName);
         category.setLevel(level);
 
         category = categoryRepository.save(category);
         if (categoryRequest.getChildren() != null) {
             List<Category> children = new ArrayList<>();
             for (CategoryRequest childRequest : categoryRequest.getChildren()) {
-                Category child = saveCategoryRequest(childRequest, category.getCategoryId(), level + 1);
+                Category child = saveCategoryRequest(childRequest, category.getCategoryId(), category.getName() ,level + 1);
                 children.add(child);
             }
             category.setChildren(children);

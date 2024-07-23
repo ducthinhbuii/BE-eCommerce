@@ -1,8 +1,10 @@
 package com.example.ecommerce.services;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -126,24 +128,24 @@ public class ProductImpService implements ProductService {
     }
 
     @Override
-    public List<Product>getAllProduct(String category, ArrayList<String> colors, ArrayList<String> sizes,
+    public Map<String, Object> getAllProduct(String category, ArrayList<String> colors, ArrayList<String> sizes,
                                     Integer minPrice, Integer maxPrice, Integer minDiscount, String sort, String stock,
                                     Integer pageNumber, Integer pageSize)
     {
-        List<Product> products = fillterProducts(category, minPrice, maxPrice, minDiscount, sort, pageNumber, pageSize);
-        if(colors != null){
-            products = products.stream().filter(p->colors.stream().anyMatch(c->c.equalsIgnoreCase(p.getColor())))
-                        .collect(Collectors.toList());
-        }
+        Map<String, Object> results = fillterProducts(category, minPrice, maxPrice, minDiscount, sort, pageNumber, pageSize);
+        // if(colors != null){
+        //     products = products.stream().filter(p->colors.stream().anyMatch(c->c.equalsIgnoreCase(p.getColor())))
+        //                 .collect(Collectors.toList());
+        // }
 
-        if(stock != null){
-            if(stock.equalsIgnoreCase("in-stock")){
-                products = products.stream().filter(p->p.getQuantity() > 0).collect(Collectors.toList());
-            } else if (stock.equalsIgnoreCase("out-of-stock")){
-                products = products.stream().filter(p->p.getQuantity() < 1).collect(Collectors.toList());
-            }
-        }
-        return products;
+        // if(stock != null){
+        //     if(stock.equalsIgnoreCase("in-stock")){
+        //         products = products.stream().filter(p->p.getQuantity() > 0).collect(Collectors.toList());
+        //     } else if (stock.equalsIgnoreCase("out-of-stock")){
+        //         products = products.stream().filter(p->p.getQuantity() < 1).collect(Collectors.toList());
+        //     }
+        // }
+        return results;
     }
 
     @Override
@@ -181,7 +183,7 @@ public class ProductImpService implements ProductService {
     }
 
     @Override
-    public List<Product> fillterProducts(String categoryId, Integer minPrice, Integer maxPrice, Integer minDiscount, String sort, Integer pageNumber, Integer pageSize) {
+    public Map<String, Object> fillterProducts(String categoryId, Integer minPrice, Integer maxPrice, Integer minDiscount, String sort, Integer pageNumber, Integer pageSize) {
         Query query = new Query();
 
         String tempId = categoryId;
@@ -190,12 +192,7 @@ public class ProductImpService implements ProductService {
             queryFindProductByChildCat(categoryId, criterias);
             Criteria combinedCriteria = new Criteria().orOperator(criterias.toArray(new Criteria[0]));
             query.addCriteria(combinedCriteria);
-            // query.addCriteria(Criteria.where("category.categoryId").in(categoryIds));
         }
-
-        // if(categoryId != null){
-        //     query.addCriteria(Criteria.where("category.categoryId").is(categoryId));
-        // }
 
         if (minPrice != null || maxPrice != null) {
             Criteria priceCriteria = Criteria.where("discountPrice");
@@ -222,10 +219,18 @@ public class ProductImpService implements ProductService {
             query.with(Sort.by(Sort.Order.desc("discountPrice")));
         }
 
+        long totalProduct = mongoTemplate.count(query, Product.class);
+
         if(pageNumber != null && pageSize != null){
             Integer skip = pageNumber * pageSize;
             query.skip(skip).limit(pageSize);
         }
-        return mongoTemplate.find(query, Product.class);
+
+        List<Product> products = mongoTemplate.find(query, Product.class);
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("totalCount", totalProduct);
+        result.put("products", products);
+        return result;
     }
 }

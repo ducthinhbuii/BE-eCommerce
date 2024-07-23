@@ -55,6 +55,11 @@ public class ProductController {
         return ResponseEntity.ok(productImpService.findById(productId));
     }
 
+    @PostMapping("/update/{productId}")
+    public ResponseEntity<Product> updateProductById(@PathVariable String productId, @RequestBody Product req){
+        return ResponseEntity.ok(productImpService.updateProduct(productId, req));
+    }
+
     // @GetMapping("/{id}")
     // public ResponseEntity<Product> getProductById(@PathVariable String id){
     //     Optional<Product> product = productRepository.findById(id);

@@ -148,13 +148,16 @@ public class ProductImpService implements ProductService {
 
     @Override
     public Product updateProduct(String ProductId, Product req){
-        Product product = productRepository.findById(ProductId).get();
-
-        if(req.getQuantity() != 0){
-            product.setQuantity(req.getQuantity());
+        Optional<Product> productOp = productRepository.findById(ProductId);
+        if(productOp != null){
+            Product product = productOp.get();
+            Category category = categoryRepository.findByCategoryId(req.getCategory().getCategoryId()).get(0);
+            product.setCategory(category);
+            return productRepository.save(product);
+        } else {
+            return null;
         }
 
-        return productRepository.save(product);
     }
 
     @Override
@@ -167,13 +170,32 @@ public class ProductImpService implements ProductService {
         productRepository.deleteById(theId);
     }
 
-    @Override
-    public List<Product> fillterProducts(String category, Integer minPrice, Integer maxPrice, Integer minDiscount, String sort, Integer pageNumber, Integer pageSize) {
-        System.out.println(category);
-        Query query = new Query();
-        if(category != null){
-            query.addCriteria(Criteria.where("category.categoryId").is(category));
+    public void queryFindProductByChildCat(String categoryId, List<Criteria> criterias){
+        criterias.add(Criteria.where("category.categoryId").is(categoryId));
+        Category category = categoryRepository.findByCategoryId(categoryId).get(0);
+        if(category.getChildren() != null){
+            for(Category child: category.getChildren()){
+                queryFindProductByChildCat(child.getCategoryId(), criterias);
+            }
         }
+    }
+
+    @Override
+    public List<Product> fillterProducts(String categoryId, Integer minPrice, Integer maxPrice, Integer minDiscount, String sort, Integer pageNumber, Integer pageSize) {
+        Query query = new Query();
+
+        String tempId = categoryId;
+        if (tempId != null){
+            List<Criteria> criterias = new ArrayList<>();
+            queryFindProductByChildCat(categoryId, criterias);
+            Criteria combinedCriteria = new Criteria().orOperator(criterias.toArray(new Criteria[0]));
+            query.addCriteria(combinedCriteria);
+            // query.addCriteria(Criteria.where("category.categoryId").in(categoryIds));
+        }
+
+        // if(categoryId != null){
+        //     query.addCriteria(Criteria.where("category.categoryId").is(categoryId));
+        // }
 
         if (minPrice != null || maxPrice != null) {
             Criteria priceCriteria = Criteria.where("discountPrice");

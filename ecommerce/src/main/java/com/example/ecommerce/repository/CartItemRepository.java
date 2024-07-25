@@ -10,9 +10,9 @@ import com.example.ecommerce.model.Product;
 
 public interface CartItemRepository extends MongoRepository<CartItem, String> {
 
-    @Query("{cart: ?0, product: ?1, size: ?2, userId: ?3}")
-    public CartItem isCartItemExists(@Param("cart") Cart cart, 
-                                    @Param("product") Product product, 
-                                    @Param("size") String size, 
-                                    @Param("userId") String userId);
+    // @Query("{cart: ?0, product: ?1, size: ?2, userId: ?3}")
+    // public CartItem isCartItemExists(@Param("cart") Cart cart, 
+    //                                 @Param("product") Product product, 
+    //                                 @Param("size") String size, 
+    //                                 @Param("userId") String userId);
 }

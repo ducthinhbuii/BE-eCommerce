@@ -1,6 +1,8 @@
 package com.example.ecommerce.services;
 
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -34,21 +36,61 @@ public class CartImpService implements CartService {
     @Override
     public String addCartItem(String userId, AddItemRequest req) {
         Cart cart = cartRepository.findByUserId(userId);
-        Product product = productService.findById(req.getProductId());
-        CartItem isPresent = cartItemService.isCartItemExists(cart, product, req.getSize(),userId);
+        CartItem isPresent = cartItemService.isCartItemExists(userId, req.getProductId());
         if(isPresent == null){
             CartItem cartItem = new CartItem();
-            cartItem.setProduct(product);
+            cartItem.setProductId(req.getProductId());
             cartItem.setCart(cart.getCartId());
             cartItem.setUserId(userId);
             cartItem.setQuantity(req.getQuantity());
             cartItem.setSize(req.getSize());
-            cartItem.setPrice(req.getQuantity() * product.getDiscountPrice());
+            cartItem.setPrice(req.getQuantity() * req.getPrice());
+            cartItem.setDiscountPrice(req.getQuantity() * req.getDiscountPrice());
             CartItem createCartItem = cartItemService.createCartItem(cartItem);
+
             cart.getCartItems().add(createCartItem);
+            cart.setTotalPrice(cart.getTotalPrice() + createCartItem.getPrice());
+            cart.setTotalDiscountPrice(cart.getTotalDiscountPrice() + createCartItem.getDiscountPrice());
+            cart.setTotalItem(cart.getTotalItem() + 1);
+            cart.setDiscount(cart.getTotalPrice() - cart.getTotalDiscountPrice());
             cartRepository.save(cart);
+        } else {
+            isPresent.setQuantity(isPresent.getQuantity() + req.getQuantity());
+            isPresent.setPrice(isPresent.getPrice() + req.getQuantity() * req.getPrice());
+            isPresent.setDiscountPrice(isPresent.getDiscountPrice() + req.getQuantity() * req.getDiscountPrice());
+            cartItemService.createCartItem(isPresent);
+
+            cart.setTotalPrice(cart.getTotalPrice() + req.getQuantity() * req.getPrice());
+            cart.setTotalDiscountPrice(cart.getTotalDiscountPrice() + req.getQuantity() * req.getDiscountPrice());
+            cart.setDiscount(cart.getTotalPrice() - cart.getTotalDiscountPrice());
+            cartRepository.save(cart);
+            
         }
         return "Add Item to Cart";
+    }
+
+    @Override
+    public String removeProductCart(String userId, AddItemRequest req){
+        Cart cart = cartRepository.findByUserId(userId);
+        CartItem isPresent = cartItemService.isCartItemExists(userId, req.getProductId());
+        if(isPresent != null){
+            if(isPresent.getQuantity() > req.getQuantity()){
+                cartItemService.removeProductCartItem(isPresent, req);
+            } else if (isPresent.getQuantity() == req.getQuantity()){
+                cart.setTotalItem(cart.getTotalItem() - 1);
+                Set<CartItem> temp = cart.getCartItems().stream().filter(cartItem -> !cartItem.getCartItemId().equals(isPresent.getCartItemId())).collect(Collectors.toSet());
+                cart.setCartItems(temp);
+                cartItemService.removeCartItem(isPresent);
+            } else {
+                return "quantity is not reliable";
+            }
+        }
+
+        cart.setTotalPrice(cart.getTotalPrice() - req.getPrice() * req.getQuantity());
+        cart.setTotalDiscountPrice(cart.getTotalDiscountPrice() - req.getDiscountPrice() * req.getQuantity());
+        cart.setDiscount(cart.getTotalPrice() - cart.getTotalDiscountPrice());
+        cartRepository.save(cart);
+        return "remove product cart success";
     }
 
     @Override
@@ -73,6 +115,11 @@ public class CartImpService implements CartService {
     @Override
     public ArrayList<Cart> getAllCards() {
         return (ArrayList<Cart>) cartRepository.findAll();
+    }
+
+    @Override
+    public Cart getCartByUserId(String userId){
+        return cartRepository.findByUserId(userId);
     }
     
 }

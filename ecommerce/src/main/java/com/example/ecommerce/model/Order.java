@@ -26,8 +26,8 @@ public class Order {
     private PaymentDetails paymentDetails;
 
     private double totalPrice;
-    private int totalDiscountPrice;
-    private int discount;
+    private double totalDiscountPrice;
+    private double discount;
     private int totalItem;
     private String orderStatus;
     private LocalDateTime created;
@@ -82,16 +82,16 @@ public class Order {
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
     }
-    public int getTotalDiscountPrice() {
+    public double getTotalDiscountPrice() {
         return totalDiscountPrice;
     }
-    public void setTotalDiscountPrice(int totalDiscountPrice) {
+    public void setTotalDiscountPrice(double totalDiscountPrice) {
         this.totalDiscountPrice = totalDiscountPrice;
     }
-    public int getDiscount() {
+    public double getDiscount() {
         return discount;
     }
-    public void setDiscount(int discount) {
+    public void setDiscount(double discount) {
         this.discount = discount;
     }
     public int getTotalItem() {

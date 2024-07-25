@@ -9,5 +9,5 @@ import com.example.ecommerce.model.Cart;
 public interface CartRepository extends MongoRepository<Cart, String> {
 
     @Query("{'users.id': ?0}")
-    Cart findByUserId(@Param("userId") String userId);
+    Cart findByUserId(String userId);
 }

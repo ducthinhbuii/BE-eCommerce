@@ -29,8 +29,18 @@ public class CartController {
         return ResponseEntity.ok(cartService.getAllCards());
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<Cart> getAllCards(@PathVariable String userId){
+        return ResponseEntity.ok(cartService.getCartByUserId(userId));
+    }
+
     @PostMapping("/add/{userId}")
     public ResponseEntity<String> addCart(@PathVariable String userId, @RequestBody AddItemRequest req){
         return ResponseEntity.ok(cartService.addCartItem(userId, req));
+    }
+
+    @PostMapping("/remove/{userId}")
+    public ResponseEntity<String> removeCart(@PathVariable String userId, @RequestBody AddItemRequest req){
+        return ResponseEntity.ok(cartService.removeProductCart(userId, req));
     }
 }

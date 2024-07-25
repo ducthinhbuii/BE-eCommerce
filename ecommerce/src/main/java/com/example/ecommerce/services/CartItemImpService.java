@@ -2,6 +2,10 @@ package com.example.ecommerce.services;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.example.ecommerce.model.Cart;
@@ -11,6 +15,7 @@ import com.example.ecommerce.model.Users;
 import com.example.ecommerce.repository.CartItemRepository;
 import com.example.ecommerce.repository.CartRepository;
 import com.example.ecommerce.repository.UserRepository;
+import com.example.ecommerce.request.AddItemRequest;
 
 @Service
 public class CartItemImpService implements CartItemService{
@@ -18,6 +23,9 @@ public class CartItemImpService implements CartItemService{
     private CartItemRepository cartItemRepository;
     private UserRepository userRepository;
     private CartRepository cartRepository;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     public CartItemImpService(CartItemRepository cartItemRepository, UserRepository userRepository,
             CartRepository cartRepository) {
@@ -28,9 +36,9 @@ public class CartItemImpService implements CartItemService{
 
     @Override
     public CartItem createCartItem(CartItem cartItem) {
-        cartItem.setQuantity(1);
-        cartItem.setPrice(cartItem.getProduct().getPrice()*cartItem.getQuantity());
-        cartItem.setDiscountPrice(cartItem.getProduct().getDiscountPrice() * cartItem.getQuantity());
+        // cartItem.setQuantity(1);
+        // cartItem.setPrice(cartItem.getProduct().getPrice()*cartItem.getQuantity());
+        // cartItem.setDiscountPrice(cartItem.getProduct().getDiscountPrice() * cartItem.getQuantity());
         CartItem createCartItem = cartItemRepository.save(cartItem);
         return createCartItem;
     }
@@ -39,34 +47,43 @@ public class CartItemImpService implements CartItemService{
     public CartItem updateCartItem(String userId, String id, CartItem cartItem) {
         CartItem cartItem2 = findCartItemById(id);
 
-        Optional<Users> temp = userRepository.findById(cartItem2.getUserId());
-        if(temp.isPresent()){
-            Users user = temp.get();
-            if(user.getId().equals(userId)){
-                cartItem2.setQuantity(cartItem.getQuantity());
-                cartItem2.setPrice(cartItem2.getProduct().getPrice() * cartItem2.getQuantity());
-                cartItem2.setDiscountPrice(cartItem2.getProduct().getDiscountPrice() * cartItem2.getQuantity());
-            }
+        if(cartItem2.getUserId().equals(userId)){
+            cartItem2.setQuantity(cartItem.getQuantity());
+            cartItem2.setPrice(cartItem.getPrice());
+            cartItem2.setDiscountPrice(cartItem.getDiscountPrice());
         }
         return cartItemRepository.save(cartItem2);
 
     }
 
     @Override
-    public CartItem isCartItemExists(Cart cart, Product product, String size, String userId) {
-        CartItem cartItem = cartItemRepository.isCartItemExists(cart, product, size, userId);
+    public CartItem isCartItemExists(String userId, String productId) {
+        CartItem cartItem = getCartItemExists(userId, productId);
         return cartItem;
     }
 
+    public CartItem getCartItemExists(String userId, String productId){
+        Query query = new Query();
+        query.addCriteria(Criteria.where("userId").is(userId));
+        query.addCriteria(Criteria.where("productId").is(productId));
+        CartItem cartItem = mongoTemplate.findOne(query, CartItem.class);
+        return cartItem;
+    }
+
+
     @Override
-    public void removeCartItem(String cartItemId, String userId) {
-        CartItem cartItem = findCartItemById(cartItemId);
-        if(cartItem.getUserId().equals(userId)){
-            cartItemRepository.delete(cartItem);
-        } else {
-            throw new UnsupportedOperationException("You can't remove another users item"); 
-        }
-        
+    public String removeCartItem(CartItem cartItem) {
+        cartItemRepository.delete(cartItem);
+        return "remove success";
+    }
+
+    @Override
+    public String removeProductCartItem(CartItem cartItem, AddItemRequest req){
+        cartItem.setQuantity(cartItem.getQuantity() - req.getQuantity());
+        cartItem.setPrice(cartItem.getPrice() - req.getPrice() * req.getQuantity());
+        cartItem.setDiscountPrice(cartItem.getDiscountPrice() - req.getDiscountPrice() * req.getQuantity());
+        cartItemRepository.save(cartItem);
+        return "remove success";
     }
 
     @Override

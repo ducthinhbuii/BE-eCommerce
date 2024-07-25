@@ -13,8 +13,7 @@ public class OrderItem {
 
     // @DBRef
     private String orderId;
-    @DBRef
-    private Product product;
+    private String productId;
 
     private int quantity;
     private String size;
@@ -37,11 +36,18 @@ public class OrderItem {
     public void setOrder(String orderId) {
         this.orderId = orderId;
     }
-    public Product getProduct() {
-        return product;
+    
+    public String getOrderId() {
+        return orderId;
     }
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+    public String getProductId() {
+        return productId;
+    }
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
     public int getQuantity() {
         return quantity;

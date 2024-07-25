@@ -12,7 +12,8 @@ public class CartItem {
 
     private String cartId;
     
-    private String productId;
+    @DBRef
+    private Product product;
     
     private int quantity;
     private String size;
@@ -39,12 +40,7 @@ public class CartItem {
     public void setCartId(String cartId) {
         this.cartId = cartId;
     }
-    public String getProductId() {
-        return productId;
-    }
-    public void setProductId(String productId) {
-        this.productId = productId;
-    }
+    
     public int getQuantity() {
         return quantity;
     }
@@ -74,6 +70,12 @@ public class CartItem {
     }
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+    public Product getProduct() {
+        return product;
+    }
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     

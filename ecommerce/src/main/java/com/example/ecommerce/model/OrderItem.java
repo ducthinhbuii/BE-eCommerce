@@ -13,7 +13,9 @@ public class OrderItem {
 
     // @DBRef
     private String orderId;
-    private String productId;
+
+    @DBRef
+    private Product product;
 
     private int quantity;
     private String size;
@@ -43,12 +45,7 @@ public class OrderItem {
     public void setOrderId(String orderId) {
         this.orderId = orderId;
     }
-    public String getProductId() {
-        return productId;
-    }
-    public void setProductId(String productId) {
-        this.productId = productId;
-    }
+    
     public int getQuantity() {
         return quantity;
     }
@@ -84,6 +81,12 @@ public class OrderItem {
     }
     public void setDeliveryDate(LocalDateTime deliveryDate) {
         this.deliveryDate = deliveryDate;
+    }
+    public Product getProduct() {
+        return product;
+    }
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     

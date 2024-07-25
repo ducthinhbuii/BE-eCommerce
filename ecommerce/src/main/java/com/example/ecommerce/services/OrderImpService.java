@@ -75,7 +75,7 @@ public class OrderImpService implements OrderService{
             OrderItem newOrderItem = new OrderItem();
             newOrderItem.setPrice(cartItem.getPrice());
             newOrderItem.setQuantity(cartItem.getQuantity());
-            newOrderItem.setProductId(cartItem.getProductId());
+            newOrderItem.setProduct(cartItem.getProduct());
             newOrderItem.setSize(cartItem.getSize());
             newOrderItem.setUserId(cartItem.getUserId());
             newOrderItem.setDiscountPrice(cartItem.getDiscountPrice());

@@ -36,10 +36,11 @@ public class CartImpService implements CartService {
     @Override
     public String addCartItem(String userId, AddItemRequest req) {
         Cart cart = cartRepository.findByUserId(userId);
+        Product product = productService.findById(req.getProductId());
         CartItem isPresent = cartItemService.isCartItemExists(userId, req.getProductId());
         if(isPresent == null){
             CartItem cartItem = new CartItem();
-            cartItem.setProductId(req.getProductId());
+            cartItem.setProduct(product);
             cartItem.setCart(cart.getCartId());
             cartItem.setUserId(userId);
             cartItem.setQuantity(req.getQuantity());

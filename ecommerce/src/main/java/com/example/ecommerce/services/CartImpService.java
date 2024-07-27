@@ -95,6 +95,26 @@ public class CartImpService implements CartService {
     }
 
     @Override
+    public String removeCartItem(String userId, AddItemRequest req){
+        Cart cart = cartRepository.findByUserId(userId);
+        CartItem isPresent = cartItemService.isCartItemExists(userId, req.getProductId());
+        if(isPresent != null){
+            int quantity = 0;
+            quantity = isPresent.getQuantity();
+            cart.setTotalItem(cart.getTotalItem() - 1);
+            Set<CartItem> temp = cart.getCartItems().stream().filter(cartItem -> !cartItem.getCartItemId().equals(isPresent.getCartItemId())).collect(Collectors.toSet());
+            cart.setCartItems(temp);
+            cartItemService.removeCartItem(isPresent);
+            cart.setTotalPrice(cart.getTotalPrice() - req.getPrice() * quantity);
+            cart.setTotalDiscountPrice(cart.getTotalDiscountPrice() - req.getDiscountPrice() * quantity);
+            cart.setDiscount(cart.getTotalPrice() - cart.getTotalDiscountPrice());
+            cartRepository.save(cart);
+        }
+
+        return "remove cart items success";
+    }
+
+    @Override
     public Cart findUserCart(String userId) {
         Cart cart = cartRepository.findByUserId(userId);
 

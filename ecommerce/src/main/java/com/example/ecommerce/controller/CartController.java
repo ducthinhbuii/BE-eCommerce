@@ -43,4 +43,9 @@ public class CartController {
     public ResponseEntity<String> removeCart(@PathVariable String userId, @RequestBody AddItemRequest req){
         return ResponseEntity.ok(cartService.removeProductCart(userId, req));
     }
+
+    @PostMapping("/remove-cart-item/{userId}")
+    public ResponseEntity<String> removeCartItems(@PathVariable String userId, @RequestBody AddItemRequest req){
+        return ResponseEntity.ok(cartService.removeCartItem(userId, req));
+    }
 }

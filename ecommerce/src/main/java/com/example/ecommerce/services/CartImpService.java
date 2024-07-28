@@ -118,19 +118,20 @@ public class CartImpService implements CartService {
     public Cart findUserCart(String userId) {
         Cart cart = cartRepository.findByUserId(userId);
 
-        int totalPrice = 0, totalDiscountPrice = 0, totalItem = 0;
+        // int totalPrice = 0, totalDiscountPrice = 0, totalItem = 0;
 
-        for(CartItem c: cart.getCartItems()){
-            totalPrice += c.getPrice();
-            totalDiscountPrice += c.getDiscountPrice();
-            totalItem += c.getQuantity();
-        }
+        // for(CartItem c: cart.getCartItems()){
+        //     totalPrice += c.getPrice();
+        //     totalDiscountPrice += c.getDiscountPrice();
+        //     totalItem += c.getQuantity();
+        // }
 
-        cart.setTotalPrice(totalPrice);
-        cart.setTotalDiscountPrice(totalDiscountPrice);
-        cart.setTotalItem(totalItem);
-        cart.setDiscount(totalPrice - totalDiscountPrice);
-        return cartRepository.save(cart);
+        // cart.setTotalPrice(totalPrice);
+        // cart.setTotalDiscountPrice(totalDiscountPrice);
+        // cart.setTotalItem(totalItem);
+        // cart.setDiscount(totalPrice - totalDiscountPrice);
+        // return cartRepository.save(cart);
+        return cart;
     }
 
     @Override

@@ -3,6 +3,7 @@ import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import com.example.ecommerce.model.Address;
 import com.example.ecommerce.model.Users;
 
 public interface UserRepository extends MongoRepository<Users, String> {

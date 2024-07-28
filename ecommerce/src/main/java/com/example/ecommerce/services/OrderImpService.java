@@ -70,40 +70,16 @@ public class OrderImpService implements OrderService{
         }
 
         Cart cart = cartService.findUserCart(user.getId());
-        ArrayList<OrderItem> orderItems = new ArrayList<>();
-        for(CartItem cartItem: cart.getCartItems()){
-            OrderItem newOrderItem = new OrderItem();
-            newOrderItem.setPrice(cartItem.getPrice());
-            newOrderItem.setQuantity(cartItem.getQuantity());
-            newOrderItem.setProduct(cartItem.getProduct());
-            newOrderItem.setSize(cartItem.getSize());
-            newOrderItem.setUserId(cartItem.getUserId());
-            newOrderItem.setDiscountPrice(cartItem.getDiscountPrice());
-            OrderItem createNewOrderItem = orderItemRepository.save(newOrderItem);
-            orderItems.add(createNewOrderItem);
-        }
+        order.setCart(cart);
 
         PaymentDetails paymentDetails = new PaymentDetails();
         paymentDetails.setPaymentStatus("Pending");
         paymentDetailRepository.save(paymentDetails);
         order.setPaymentDetails(paymentDetails);
 
-        order.setOrderItems(orderItems);
-        order.setTotalPrice(cart.getTotalPrice());
-        order.setTotalDiscountPrice(cart.getTotalDiscountPrice());
-        order.setDiscount(cart.getDiscount());
-        order.setTotalItem(cart.getTotalItem());
-        order.setOrderDate(LocalDateTime.now());
         order.setOrderStatus("Pending");
-        order.setUser(user);
-        order.setCreated(LocalDateTime.now());
+        order.setCreateAt(LocalDateTime.now());
         Order savedOrder = orderRepository.save(order);
-
-        for(OrderItem item: orderItems){
-            item.setOrder(savedOrder.getOrderId());
-            orderItemRepository.deleteById(item.getOrderItemId());
-            orderItemRepository.save(item);
-        }
 
         return savedOrder;
 

@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.ecommerce.model.Address;
 import com.example.ecommerce.model.Users;
 import com.example.ecommerce.repository.UserRepository;
 import com.example.ecommerce.request.LoginRequest;
@@ -90,6 +91,15 @@ public class UserController {
         return ResponseEntity.ok(this.userRepository.findAll());
     }
 
+    @GetMapping("/address/{userId}")
+    public ResponseEntity<List<Address>> getAddressUser(@PathVariable String userId) {
+        Optional<Users> user = userRepository.findById(userId);
+        if(user.isPresent()){
+            return ResponseEntity.ok(user.get().getListAddress());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
     @GetMapping("/me")
     public ResponseEntity<Object> getUser(@AuthenticationPrincipal UserDetails currentUser) {
         Optional<Users> user = userRepository.findByUsername(currentUser.getUsername());

@@ -14,12 +14,13 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.ecommerce.response.PaymentInfoResponse;
 import com.example.ecommerce.response.PaymentResponse;
 import com.example.ecommerce.vnpay.Config;
 
@@ -69,6 +70,24 @@ public class PaymentController {
         paymentResponse.setMessage("successfully");
         paymentResponse.setUrl(paymentUrl);
         return ResponseEntity.status(HttpStatus.OK).body(paymentResponse);
+    }
+
+    @GetMapping("/payment-info")
+    public ResponseEntity<?> paymentInfo(
+        @RequestParam("vnp_Amount") String vnp_Amount,
+        @RequestParam("vnp_BankCode") String vnp_BankCode,
+        @RequestParam("vnp_OrderInfo") String vnp_OrderInfo,
+        @RequestParam("vnp_ResponseCode") String vnp_ResponseCode
+    ){
+        PaymentInfoResponse paymentInfoResponse = new PaymentInfoResponse();
+        if(vnp_ResponseCode.equals("00")){
+            paymentInfoResponse.setStatus("ok");
+            paymentInfoResponse.setMessage("Successfully");
+        } else {
+            paymentInfoResponse.setStatus("no");
+            paymentInfoResponse.setMessage("Fail");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(paymentInfoResponse);
     }
 
 

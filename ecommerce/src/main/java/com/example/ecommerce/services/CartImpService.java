@@ -150,6 +150,9 @@ public class CartImpService implements CartService {
     public String resetCart(String cartId){
         try {
             Cart cart = cartRepository.findByCartId(cartId);
+            for(CartItem cartItems : cart.getCartItems()){
+                cartItemService.removeCartItem(cartItems);
+            }
             Set<CartItem> cartItems = new HashSet<>();
             cart.setCartItems(cartItems);
             cart.setTotalPrice(0);

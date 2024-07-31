@@ -11,17 +11,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.ecommerce.model.Cart;
+import com.example.ecommerce.model.Order;
 import com.example.ecommerce.request.AddItemRequest;
 import com.example.ecommerce.services.CartService;
+import com.example.ecommerce.services.OrderService;
 
 @RestController
 @RequestMapping("/api/cart")
 public class CartController {
 // Suggested code may be subject to a license. Learn more: ~LicenseLog:551062463.
     private final CartService cartService;
+    private final OrderService orderService;
 
-    public CartController(CartService cartService) {
+    public CartController(CartService cartService, OrderService orderService) {
         this.cartService = cartService;
+        this.orderService = orderService;
     }
 
     @GetMapping("")
@@ -49,11 +53,12 @@ public class CartController {
         return ResponseEntity.ok(cartService.removeCartItem(userId, req));
     }
 
-    @GetMapping("/reset-cart/{cardId}")
-    public ResponseEntity<?> resetCard(@PathVariable String cardId){
+    @GetMapping("/reset-cart/{orderId}")
+    public ResponseEntity<?> resetCard(@PathVariable String orderId){
         try {
-            System.out.println(cardId);
-            cartService.resetCart(cardId);
+            Order order = orderService.findOrderById(orderId);
+            System.out.println(order.getCart().getCartId());
+            cartService.resetCart(order.getCart().getCartId());
             return ResponseEntity.ok("remove success");
         } catch (Exception e) {
             return ResponseEntity.ok(e.getMessage());

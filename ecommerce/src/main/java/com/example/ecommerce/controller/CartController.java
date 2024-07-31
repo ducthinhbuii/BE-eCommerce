@@ -48,4 +48,16 @@ public class CartController {
     public ResponseEntity<String> removeCartItems(@PathVariable String userId, @RequestBody AddItemRequest req){
         return ResponseEntity.ok(cartService.removeCartItem(userId, req));
     }
+
+    @GetMapping("/reset-cart/{cardId}")
+    public ResponseEntity<?> resetCard(@PathVariable String cardId){
+        try {
+            System.out.println(cardId);
+            cartService.resetCart(cardId);
+            return ResponseEntity.ok("remove success");
+        } catch (Exception e) {
+            return ResponseEntity.ok(e.getMessage());
+        }
+        
+    }
 }

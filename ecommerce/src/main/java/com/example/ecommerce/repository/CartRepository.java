@@ -10,4 +10,5 @@ public interface CartRepository extends MongoRepository<Cart, String> {
 
     @Query("{'users.id': ?0}")
     Cart findByUserId(String userId);
+    Cart findByCartId(String cartId);
 }

@@ -1,6 +1,7 @@
 package com.example.ecommerce.services;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -49,6 +50,7 @@ public class CartImpService implements CartService {
             cartItem.setDiscountPrice(req.getQuantity() * req.getDiscountPrice());
             CartItem createCartItem = cartItemService.createCartItem(cartItem);
 
+            // System.out.println(cart.getCartItems().size());
             cart.getCartItems().add(createCartItem);
             cart.setTotalPrice(cart.getTotalPrice() + createCartItem.getPrice());
             cart.setTotalDiscountPrice(cart.getTotalDiscountPrice() + createCartItem.getDiscountPrice());
@@ -144,4 +146,22 @@ public class CartImpService implements CartService {
         return cartRepository.findByUserId(userId);
     }
     
+    @Override
+    public String resetCart(String cartId){
+        try {
+            Cart cart = cartRepository.findByCartId(cartId);
+            Set<CartItem> cartItems = new HashSet<>();
+            cart.setCartItems(cartItems);
+            cart.setTotalPrice(0);
+            cart.setTotalDiscountPrice(0);
+            cart.setTotalItem(0);
+            cart.setDiscount(0);
+            cartRepository.save(cart);
+            return "Reset cart success";
+        } catch (Exception e) {
+            // TODO: handle exception
+            return e.getMessage();
+        }
+        
+    }
 }

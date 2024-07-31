@@ -14,4 +14,5 @@ public interface CartService {
     public Cart getCartByUserId(String userId);
     public String removeProductCart(String userId, AddItemRequest req);
     public String removeCartItem(String userId, AddItemRequest req);
+    public String resetCart(String cartId);
 }

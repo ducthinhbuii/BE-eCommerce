@@ -16,12 +16,20 @@ import java.util.TimeZone;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.ecommerce.model.Order;
+import com.example.ecommerce.model.PaymentDetails;
+import com.example.ecommerce.repository.PaymentDetailRepository;
+import com.example.ecommerce.request.VNPayRequest;
 import com.example.ecommerce.response.PaymentInfoResponse;
 import com.example.ecommerce.response.PaymentResponse;
+import com.example.ecommerce.services.OrderImpService;
 import com.example.ecommerce.vnpay.Config;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,13 +37,22 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/payment")
 public class PaymentController {
-    @GetMapping("/create-payment")
-    public ResponseEntity<?> createPayment(HttpServletRequest httpServletRequest) throws UnsupportedEncodingException{
+
+    private OrderImpService orderImpService;
+    private PaymentDetailRepository paymentDetailRepository;
+
+    public PaymentController(OrderImpService orderImpService, PaymentDetailRepository paymentDetailRepository) {
+        this.orderImpService = orderImpService;
+        this.paymentDetailRepository = paymentDetailRepository;
+    }
+
+    @PostMapping("/create-payment")
+    public ResponseEntity<?> createPayment(@RequestBody VNPayRequest req ,HttpServletRequest httpServletRequest) throws UnsupportedEncodingException{
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String vnp_TmnCode = Config.vnp_TmnCode;
         String orderType = "order";
-        long amount = 1000000;
+        long amount = req.getTotalPrice() * 100;
         String bankCode = "NCB";
         Map<String, String> vnpParamsMap = new HashMap<>();
         vnpParamsMap.put("vnp_Version", vnp_Version);
@@ -46,7 +63,8 @@ public class PaymentController {
         vnpParamsMap.put("vnp_OrderInfo", "Thanh toan don hang:" +  Config.getRandomNumber(8));
         vnpParamsMap.put("vnp_OrderType", orderType);
         vnpParamsMap.put("vnp_Locale", "vn");
-        vnpParamsMap.put("vnp_ReturnUrl", Config.vnp_ReturnUrl);
+        String returnUrl = Config.vnp_ReturnUrl + "/" + req.getOrderId();
+        vnpParamsMap.put("vnp_ReturnUrl", returnUrl);
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
         String vnpCreateDate = formatter.format(calendar.getTime());
@@ -88,6 +106,20 @@ public class PaymentController {
             paymentInfoResponse.setMessage("Fail");
         }
         return ResponseEntity.status(HttpStatus.OK).body(paymentInfoResponse);
+    }
+
+    @GetMapping("/update-payment")
+    public ResponseEntity<?> updatePaymentInfo(
+        @RequestParam("orderId") String orderId,
+        @RequestParam("vnp_TransactionNo") String vnp_TransactionNo
+    ){
+        Order order = orderImpService.findOrderById(orderId);
+        PaymentDetails paymentDetails = paymentDetailRepository.findByPaymentId(order.getPaymentDetails().getPaymentId());
+        paymentDetails.setPaymentMethod("ATM");
+        paymentDetails.setPaymentStatus("Success");
+        paymentDetails.setRazorPaymentId(vnp_TransactionNo);
+        paymentDetailRepository.save(paymentDetails);
+        return ResponseEntity.status(HttpStatus.OK).body("success update");
     }
 
 

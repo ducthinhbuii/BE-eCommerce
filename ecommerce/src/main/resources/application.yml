@@ -1,0 +1,13 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: 266057497231-npgv5va40dqo9t3csjmhc8rp1583n7uo.apps.googleusercontent.com
+            clientSecret: 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
+            redirect-uri: "https://be-ecommerce-zyst.onrender.com/login/oauth2/code/google"
+
+server:
+  port: 8081
+# ...

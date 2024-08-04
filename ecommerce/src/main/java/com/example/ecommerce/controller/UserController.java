@@ -1,7 +1,8 @@
 package com.example.ecommerce.controller;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
-
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -66,6 +69,20 @@ public class UserController {
                                     .build());
     }
 
+    @GetMapping("/login-google")
+    public Map<String, Object> loginGoogle(OAuth2AuthenticationToken authentication) {
+        if (authentication == null) {
+            throw new RuntimeException("OAuth2AuthenticationToken is null");
+        }
+
+        OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
+        if (oauth2User == null) {
+            throw new RuntimeException("OAuth2User is null");
+        }
+
+        return oauth2User.getAttributes();
+    }
+
     @PostMapping("/register")
     public ResponseEntity addUser(@RequestBody Users user){
         try {
@@ -100,6 +117,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+
     @GetMapping("/me")
     public ResponseEntity<Object> getUser(@AuthenticationPrincipal UserDetails currentUser) {
         Optional<Users> user = userRepository.findByUsername(currentUser.getUsername());

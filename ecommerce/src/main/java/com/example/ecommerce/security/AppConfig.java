@@ -46,14 +46,20 @@ public class AppConfig{
                 .cors(c -> c.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth ->
                         auth
-                            .requestMatchers(HttpMethod.POST, "/api/user/login").permitAll()
-                            .requestMatchers(HttpMethod.GET, "/api/order/").permitAll()
-                            .requestMatchers(HttpMethod.POST, "/api/category/create-category").permitAll()
-                            .requestMatchers(HttpMethod.POST, "/api/product/**").permitAll()
-                            // .requestMatchers(HttpMethod.GET, "/").permitAll()
-                            .anyRequest().authenticated())
+                            .requestMatchers("/api/cart/**").authenticated()
+                            .requestMatchers("/api/order/**").authenticated()
+                            .requestMatchers("/api/payment/**").authenticated()
+                            .requestMatchers("/api/user/me").authenticated()
+                            .anyRequest().permitAll()
+                            )
+                
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .oauth2Login(oauth2Login -> 
+                oauth2Login
+                    // .loginPage("/login")
+                    .defaultSuccessUrl("/api/user/login-google", true)
+                )
                 .formLogin(Customizer.withDefaults()).build();
     }
 

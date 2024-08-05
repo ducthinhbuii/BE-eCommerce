@@ -4,9 +4,9 @@ spring:
       client:
         registration:
           google:
-            clientId: 266057497231-lbkstjk1ka1joahd1t705mno75hgjout.apps.googleusercontent.com
-            clientSecret: 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
-            redirect-uri: "https://8081-idx-movie-project-1717140701197.cluster-bs35cdu5w5cuaxdfch3hqqt7zm.cloudworkstations.dev/login/oauth2/code/google"
+            clientId: 266057497231-npgv5va40dqo9t3csjmhc8rp1583n7uo.apps.googleusercontent.com
+            clientSecret: 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
+            redirect-uri: "https://be-ecommerce-zyst.onrender.com/login/oauth2/code/google"
 
 server:
   port: 8081

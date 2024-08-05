@@ -60,10 +60,9 @@ public class AppConfig{
                 
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))    
-                // .formLogin(Customizer.withDefaults())
+                .formLogin(Customizer.withDefaults())
                 .oauth2Login(
                     oauth2 -> oauth2
-                    // .defaultSuccessUrl("/api/user/login-google", true)
                     .userInfoEndpoint(userInfoEndpoint ->
                             userInfoEndpoint.oidcUserService(customOidcUserService))
                 ).build();

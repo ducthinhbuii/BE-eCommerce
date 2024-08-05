@@ -27,6 +27,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.example.ecommerce.services.MyUserDetailServices;
+import com.example.ecommerce.services.oauth2.CustomOidcUserService;
 
 
 @Configuration
@@ -37,6 +38,9 @@ public class AppConfig{
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Autowired
+    private CustomOidcUserService customOidcUserService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
@@ -50,18 +54,22 @@ public class AppConfig{
                             .requestMatchers("/api/order/**").authenticated()
                             .requestMatchers("/api/payment/**").authenticated()
                             .requestMatchers("/api/user/me").authenticated()
+                            .requestMatchers("/api/user/login-google").authenticated()
                             .anyRequest().permitAll()
                             )
                 
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2Login(oauth2Login -> 
-                oauth2Login
-                    // .loginPage("/login")
-                    .defaultSuccessUrl("/api/user/login-google", true)
-                )
-                .formLogin(Customizer.withDefaults()).build();
+                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))    
+                // .formLogin(Customizer.withDefaults())
+                .oauth2Login(
+                    oauth2 -> oauth2
+                    // .defaultSuccessUrl("/api/user/login-google", true)
+                    .userInfoEndpoint(userInfoEndpoint ->
+                            userInfoEndpoint.oidcUserService(customOidcUserService))
+                ).build();
     }
+
+    
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {

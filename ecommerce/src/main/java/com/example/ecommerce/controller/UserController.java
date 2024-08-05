@@ -16,7 +16,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,6 +46,9 @@ public class UserController {
     private final CartService cartService;
     private AuthenticationManager authenticationManager;
     private JWTService jwtService;
+
+    @Autowired
+    private OAuth2AuthorizedClientService authorizedClientService;
 
     public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder, CartService cartService,
                             AuthenticationManager authenticationManager, JWTService jwtService) {
@@ -71,6 +77,7 @@ public class UserController {
 
     @GetMapping("/login-google")
     public Map<String, Object> loginGoogle(OAuth2AuthenticationToken authentication) {
+        System.out.println("Login google");
         if (authentication == null) {
             throw new RuntimeException("OAuth2AuthenticationToken is null");
         }
@@ -79,8 +86,20 @@ public class UserController {
         if (oauth2User == null) {
             throw new RuntimeException("OAuth2User is null");
         }
-
+        System.out.println(oauth2User.getAuthorities());
         return oauth2User.getAttributes();
+    }
+
+    @GetMapping("/access-token")
+    public String home(@AuthenticationPrincipal OidcUser principal) {
+        OAuth2AuthorizedClient authorizedClient = authorizedClientService
+                .loadAuthorizedClient(
+                        "google",
+                        principal.getName());
+
+        String accessToken = authorizedClient.getAccessToken().getTokenValue();
+
+        return accessToken;
     }
 
     @PostMapping("/register")

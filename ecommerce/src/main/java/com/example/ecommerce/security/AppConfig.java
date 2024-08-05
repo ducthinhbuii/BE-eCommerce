@@ -42,6 +42,9 @@ public class AppConfig{
     @Autowired
     private CustomOidcUserService customOidcUserService;
 
+    @Autowired
+    private OAuth2LoginSuccessHandle oAuth2LoginSuccessHandle;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
 
@@ -63,6 +66,7 @@ public class AppConfig{
                 .formLogin(Customizer.withDefaults())
                 .oauth2Login(
                     oauth2 -> oauth2
+                    .successHandler(oAuth2LoginSuccessHandle)
                     .userInfoEndpoint(userInfoEndpoint ->
                             userInfoEndpoint.oidcUserService(customOidcUserService))
                 ).build();

@@ -47,18 +47,17 @@ public class AppConfig{
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
-
+        
         return  httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .cors(c -> c.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth ->
                         auth
-                            .requestMatchers("/api/cart/**").authenticated()
-                            .requestMatchers("/api/order/**").authenticated()
-                            .requestMatchers("/api/payment/**").authenticated()
-                            .requestMatchers("/api/user/me").authenticated()
-                            .requestMatchers("/api/user/login-google").authenticated()
-                            .anyRequest().permitAll()
+                            .requestMatchers("/api/category/**").permitAll()
+                            .requestMatchers("/api/product/**").permitAll()
+                            .requestMatchers("/api/user/login").permitAll()
+                            .requestMatchers("/api/user").hasRole("ADMIN")
+                            .anyRequest().authenticated()
                             )
                 
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -69,7 +68,8 @@ public class AppConfig{
                     .successHandler(oAuth2LoginSuccessHandle)
                     .userInfoEndpoint(userInfoEndpoint ->
                             userInfoEndpoint.oidcUserService(customOidcUserService))
-                ).build();
+                )
+                .build();
     }
 
     

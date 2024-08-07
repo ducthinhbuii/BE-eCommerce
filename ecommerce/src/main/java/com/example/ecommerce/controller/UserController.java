@@ -86,7 +86,7 @@ public class UserController {
         if (oauth2User == null) {
             throw new RuntimeException("OAuth2User is null");
         }
-        System.out.println(oauth2User.getAuthorities());
+        // System.out.println(oauth2User.getAuthorities());
         return oauth2User.getAttributes();
     }
 
@@ -145,6 +145,20 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
+    }
+
+    @GetMapping("/google/me")
+    public ResponseEntity<Object> getUser(@AuthenticationPrincipal OidcUser oidcUser) {
+        if(oidcUser != null){
+            System.out.println(oidcUser.getEmail());
+            Optional<Users> user = userRepository.findByUsername(oidcUser.getEmail());
+            if (user.isPresent()) {
+                return ResponseEntity.ok(user.get());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
     }
 
     @DeleteMapping("/{userName}")

@@ -56,6 +56,7 @@ public class AppConfig{
                             .requestMatchers("/api/category/**").permitAll()
                             .requestMatchers("/api/product/**").permitAll()
                             .requestMatchers("/api/user/login").permitAll()
+                            .requestMatchers("/test").permitAll()
                             .requestMatchers("/api/user").hasRole("ADMIN")
                             .anyRequest().authenticated()
                             )
@@ -68,6 +69,10 @@ public class AppConfig{
                     .successHandler(oAuth2LoginSuccessHandle)
                     .userInfoEndpoint(userInfoEndpoint ->
                             userInfoEndpoint.oidcUserService(customOidcUserService))
+                )
+                .logout(logout -> logout
+                    .logoutSuccessUrl("/")
+                    .permitAll()    
                 )
                 .build();
     }

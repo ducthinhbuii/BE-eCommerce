@@ -9,4 +9,10 @@ public class MainController {
     public String helloWorld(){
         return "Hello World!";
     }
+
+    @GetMapping("/test")
+    public String test(){
+        String serviceAccountPath = System.getProperty("user.dir");
+        return serviceAccountPath;
+    }
 }

@@ -48,6 +48,7 @@ public class CustomOidcUserService implements OAuth2UserService<OidcUserRequest,
             LocalDateTime now = LocalDateTime.now(); 
             u.setCreateAt(now);
             u.setRole("USER");
+            u.setIsOauth(true);
             authorities.add(new SimpleGrantedAuthority("USER"));
             System.out.println("save user google database");
             Users savedUsers = userRepository.save(u);

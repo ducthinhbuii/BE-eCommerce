@@ -18,6 +18,7 @@ public class Users {
     private String username;
     private String email;
     private String role;
+    private Boolean isOauth;
 
     @DBRef
     private ArrayList<Address> listAddress = new ArrayList<>();
@@ -64,6 +65,8 @@ public class Users {
     public void setId(String id) {
         this.id = id;
     }
+
+    
 
     public String getFirstName() {
         return firstName;
@@ -147,6 +150,14 @@ public class Users {
 
     public void setCreateAt(LocalDateTime createAt) {
         this.createAt = createAt;
+    }
+
+    public Boolean getIsOauth() {
+        return isOauth;
+    }
+
+    public void setIsOauth(Boolean isOauth) {
+        this.isOauth = isOauth;
     }
 
     

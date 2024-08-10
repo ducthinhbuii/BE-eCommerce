@@ -56,6 +56,7 @@ public class AppConfig{
                             .requestMatchers("/api/category/**").permitAll()
                             .requestMatchers("/api/product/**").permitAll()
                             .requestMatchers("/api/user/login").permitAll()
+                            .requestMatchers("/api/user/regiser").permitAll()
                             .requestMatchers("/test").permitAll()
                             .requestMatchers("/api/user").hasRole("ADMIN")
                             .anyRequest().authenticated()

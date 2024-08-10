@@ -122,6 +122,22 @@ public class UserController {
 
     }
 
+    @PostMapping("/update/{userId}")
+    public ResponseEntity<?> updateUser(@PathVariable String userId, @RequestBody Users newUser){
+        Optional<Users> user = userRepository.findById(userId);
+        if(user.isPresent()){
+            Users currentUser = user.get();
+            currentUser.setFirstName(newUser.getFirstName());
+            currentUser.setLastName(newUser.getLastName());
+            currentUser.setEmail(newUser.getEmail());
+            currentUser.setAvatar(newUser.getAvatar());
+            userRepository.save(currentUser);
+            return ResponseEntity.ok("update user successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
     @GetMapping("")
     public ResponseEntity<List<Users>> getAllUsers(){
         return ResponseEntity.ok(this.userRepository.findAll());

@@ -19,6 +19,7 @@ public class Users {
     private String email;
     private String role;
     private Boolean isOauth;
+    private String avatar;
 
     @DBRef
     private ArrayList<Address> listAddress = new ArrayList<>();
@@ -158,6 +159,14 @@ public class Users {
 
     public void setIsOauth(Boolean isOauth) {
         this.isOauth = isOauth;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     

@@ -10,7 +10,7 @@ import com.example.ecommerce.request.CreateProductRequest;
 
 public interface ProductService {
 
-	public Map<String, Object> fillterProducts(String category,Integer minPrice,Integer maxPrice,Integer minDiscount,String sort, Integer pageNumber, Integer pageSize);
+	public Map<String, Object> fillterProducts(String category,Integer minPrice,Integer maxPrice,Integer minDiscount,String sort, Integer pageNumber, Integer pageSize, String name);
 
 	public Product createProduct(CreateProductRequest req);
 
@@ -20,7 +20,7 @@ public interface ProductService {
 
 	public Map<String, Object>getAllProduct(String category, ArrayList<String> colors, ArrayList<String> sizes,
                                     Integer minPrice, Integer maxPrice, Integer minDiscount, String sort, String stock,
-                                    Integer pageNumber, Integer pageSize);
+                                    Integer pageNumber, Integer pageSize, String name);
 	
 	void save(Product theProduct);
 	

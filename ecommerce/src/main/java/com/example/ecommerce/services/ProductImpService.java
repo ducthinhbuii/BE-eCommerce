@@ -130,9 +130,9 @@ public class ProductImpService implements ProductService {
     @Override
     public Map<String, Object> getAllProduct(String category, ArrayList<String> colors, ArrayList<String> sizes,
                                     Integer minPrice, Integer maxPrice, Integer minDiscount, String sort, String stock,
-                                    Integer pageNumber, Integer pageSize)
+                                    Integer pageNumber, Integer pageSize, String name)
     {
-        Map<String, Object> results = fillterProducts(category, minPrice, maxPrice, minDiscount, sort, pageNumber, pageSize);
+        Map<String, Object> results = fillterProducts(category, minPrice, maxPrice, minDiscount, sort, pageNumber, pageSize, name);
         // if(colors != null){
         //     products = products.stream().filter(p->colors.stream().anyMatch(c->c.equalsIgnoreCase(p.getColor())))
         //                 .collect(Collectors.toList());
@@ -183,7 +183,7 @@ public class ProductImpService implements ProductService {
     }
 
     @Override
-    public Map<String, Object> fillterProducts(String categoryId, Integer minPrice, Integer maxPrice, Integer minDiscount, String sort, Integer pageNumber, Integer pageSize) {
+    public Map<String, Object> fillterProducts(String categoryId, Integer minPrice, Integer maxPrice, Integer minDiscount, String sort, Integer pageNumber, Integer pageSize, String name) {
         Query query = new Query();
 
         String tempId = categoryId;
@@ -210,6 +210,10 @@ public class ProductImpService implements ProductService {
 
         if(minDiscount != null){
             query.addCriteria(Criteria.where("discountPercent").gte(minDiscount));
+        }
+
+        if (name != null) {
+            query.addCriteria(Criteria.where("name").regex(".*" + name + ".*", "iu"));
         }
 
         if("price_low".equalsIgnoreCase(sort)){

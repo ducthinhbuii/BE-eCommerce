@@ -45,9 +45,9 @@ public class ProductController {
     @GetMapping("/")
     public ResponseEntity<Map<String, Object>> getFilterProduct(@RequestParam(required = false) String category,@RequestParam(required = false) ArrayList<String> colors,@RequestParam(required = false) ArrayList<String> sizes,
                                    @RequestParam(required = false) Integer minPrice,@RequestParam(required = false) Integer maxPrice,@RequestParam(required = false) Integer minDiscount,@RequestParam(required = false) String sort,@RequestParam(required = false) String stock,
-                                   @RequestParam(required = false) Integer pageNumber, @RequestParam(required = false) Integer pageSize)
+                                   @RequestParam(required = false) Integer pageNumber, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) String name)
     {
-        Map<String, Object> results = productImpService.getAllProduct(category, colors, sizes, minPrice, maxPrice, minDiscount, sort, stock, pageNumber, pageSize);
+        Map<String, Object> results = productImpService.getAllProduct(category, colors, sizes, minPrice, maxPrice, minDiscount, sort, stock, pageNumber, pageSize, name);
 
         return ResponseEntity.ok(results);
     }

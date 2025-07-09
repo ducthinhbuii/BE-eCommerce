@@ -21,9 +21,9 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public class Config {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static String vnp_ReturnUrl = "https://5173-idx-movie-project-1717140701197.cluster-bs35cdu5w5cuaxdfch3hqqt7zm.cloudworkstations.dev/payment-info";
-    public static String vnp_TmnCode = "YMDZBFNL";
-    public static String secretKey = "LWLANAFPA6D350W7Z11FY3HYP7H6IRBP";
+    public static String vnp_ReturnUrl = "http://localhost:5173/payment-info";
+    public static String vnp_TmnCode = "TF3IOVD9";
+    public static String secretKey = "WZANSM5WOAZA14I0WWCW5UJ03R4XB65T";
     public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
 
     public static String md5(String message) {

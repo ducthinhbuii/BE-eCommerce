@@ -68,7 +68,7 @@ public class UserController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = jwtService.generateTokenLogin(user);
+        String jwt = jwtService.generateTokenLogin(user.getUsername());
         return ResponseEntity.ok(AuthenticationReponse.builder()
                                     .token(jwt)
                                     .authenticated(true)
@@ -103,7 +103,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity addUser(@RequestBody Users user){
+    public ResponseEntity<?> addUser(@RequestBody Users user){
         try {
             if(userRepository.findByUsername(user.getUsername()).isPresent()){
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Username has already exists");
@@ -165,7 +165,7 @@ public class UserController {
 
     @GetMapping("/google/me")
     public ResponseEntity<Object> getUser(@AuthenticationPrincipal OidcUser oidcUser) {
-        if(oidcUser != null){
+        if (oidcUser != null) {
             System.out.println(oidcUser.getEmail());
             Optional<Users> user = userRepository.findByUsername(oidcUser.getEmail());
             if (user.isPresent()) {
@@ -175,6 +175,11 @@ public class UserController {
             }
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+    }
+    
+    @GetMapping("/gg-me")
+    public Map<String, Object> getUser(@AuthenticationPrincipal OAuth2User principal) {
+        return principal.getAttributes(); // Google user info
     }
 
     @DeleteMapping("/{userName}")

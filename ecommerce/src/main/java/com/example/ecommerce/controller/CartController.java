@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.ecommerce.model.Cart;
 import com.example.ecommerce.model.Order;
+import com.example.ecommerce.model.Product;
 import com.example.ecommerce.request.AddItemRequest;
 import com.example.ecommerce.services.CartService;
 import com.example.ecommerce.services.OrderService;
@@ -39,9 +40,9 @@ public class CartController {
     }
 
     @PostMapping("/add/{userId}")
-    public ResponseEntity<String> addCart(@PathVariable String userId, @RequestBody AddItemRequest req){
+    public ResponseEntity<Product> addCart(@PathVariable String userId, @RequestBody AddItemRequest req){
         return ResponseEntity.ok(cartService.addCartItem(userId, req));
-    }
+    }   
 
     @PostMapping("/remove/{userId}")
     public ResponseEntity<String> removeCart(@PathVariable String userId, @RequestBody AddItemRequest req){

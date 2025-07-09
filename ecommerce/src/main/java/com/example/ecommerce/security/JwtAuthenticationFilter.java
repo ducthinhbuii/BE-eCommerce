@@ -31,6 +31,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response, FilterChain filterChain)
                                     throws ServletException, IOException 
     {
+        String path = request.getServletPath();
+
+        // ✅ Bỏ qua xử lý filter cho các endpoint public
+        if (path.startsWith("/api/product/")
+            || path.startsWith("/api/category/")
+            || path.startsWith("/api/user/login")
+            || path.startsWith("/api/user/register")
+            || path.equals("/test")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
             String jwt = getJwtFromRequest(request);
             if (jwt != null && jwtService.validateJwtToken(jwt)) {

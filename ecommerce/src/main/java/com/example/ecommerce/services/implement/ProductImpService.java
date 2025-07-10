@@ -1,4 +1,4 @@
-package com.example.ecommerce.services;
+package com.example.ecommerce.services.implement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.example.ecommerce.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -24,6 +25,7 @@ import com.example.ecommerce.repository.CategoryRepository;
 import com.example.ecommerce.repository.ProductRepository;
 import com.example.ecommerce.repository.SizeRepository;
 import com.example.ecommerce.request.CreateProductRequest;
+import com.example.ecommerce.exception.ResourceNotFoundException;
 
 @Service
 public class ProductImpService implements ProductService {
@@ -43,8 +45,12 @@ public class ProductImpService implements ProductService {
 
     @Override
     public Product createProduct(CreateProductRequest req){
+        // Business validation: Kiểm tra category có tồn tại không
         List<Category> categories = categoryRepository.findByCategoryId(req.getCategoryId());
-        Category category = categories == null ? null : categories.get(0);
+        if (categories == null || categories.isEmpty()) {
+            throw new ResourceNotFoundException("Category", "id", req.getCategoryId());
+        }
+        Category category = categories.get(0);
         
         // Category topLevel = categoryRepository.findByName(req.getTopLeverCategory());
         // if(topLevel == null){
@@ -116,15 +122,12 @@ public class ProductImpService implements ProductService {
     public Product findById(String theId) {
         Optional<Product> result = productRepository.findById(theId);
 		
-		Product theProduct = null;
 		if (result.isPresent()) {
-			theProduct = result.get();
+			return result.get();
 		}
 		else {
-			// we didn't find the employee
-			throw new RuntimeException("Did not find employee id - " + theId);
+			throw new ResourceNotFoundException("Product", "id", theId);
 		}
-		return theProduct;
     }
 
     @Override
@@ -151,15 +154,14 @@ public class ProductImpService implements ProductService {
     @Override
     public Product updateProduct(String ProductId, Product req){
         Optional<Product> productOp = productRepository.findById(ProductId);
-        if(productOp != null){
+        if(productOp.isPresent()){
             Product product = productOp.get();
             Category category = categoryRepository.findByCategoryId(req.getCategory().getCategoryId()).get(0);
             product.setCategory(category);
             return productRepository.save(product);
         } else {
-            return null;
+            throw new ResourceNotFoundException("Product", "id", ProductId);
         }
-
     }
 
     @Override

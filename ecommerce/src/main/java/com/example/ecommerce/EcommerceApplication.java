@@ -14,9 +14,11 @@ import jakarta.annotation.PostConstruct;
 public class EcommerceApplication {
 
 	public static void main(String[] args) {
-
+		
 		Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 		dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
+		String googleClientId = dotenv.get("GOOGLE_CLIENT_ID");
+		System.out.println("GOOGLE_CLIENT_ID: " + googleClientId);
 		SpringApplication.run(EcommerceApplication.class, args);
 	}
 

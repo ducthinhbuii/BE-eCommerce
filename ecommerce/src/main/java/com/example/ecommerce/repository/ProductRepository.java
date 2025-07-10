@@ -10,6 +10,7 @@ import com.example.ecommerce.model.Product;
 
 public interface ProductRepository extends MongoRepository<Product, String>{
     Optional<Product> findByCategory(String category);
+    Optional<Product> findByName(String name);
 
     // @Query("{$and: [" +
     //     "{$or: [{category.name: ?0}, {category.name: ''}]}" +

@@ -1,8 +1,10 @@
-package com.example.ecommerce.services;
+package com.example.ecommerce.services.implement;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import com.example.ecommerce.services.ProductService;
+import com.example.ecommerce.services.RatingService;
 import org.springframework.stereotype.Service;
 
 import com.example.ecommerce.model.Product;

@@ -1,10 +1,13 @@
-package com.example.ecommerce.services;
+package com.example.ecommerce.services.implement;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.example.ecommerce.services.CartItemService;
+import com.example.ecommerce.services.CartService;
+import com.example.ecommerce.services.ProductService;
 import org.springframework.stereotype.Service;
 
 import com.example.ecommerce.model.Cart;
@@ -13,6 +16,7 @@ import com.example.ecommerce.model.Product;
 import com.example.ecommerce.model.Users;
 import com.example.ecommerce.repository.CartRepository;
 import com.example.ecommerce.request.AddItemRequest;
+import com.example.ecommerce.exception.ResourceNotFoundException;
 
 @Service
 public class CartImpService implements CartService {
@@ -36,7 +40,13 @@ public class CartImpService implements CartService {
 
     @Override
     public Product addCartItem(String userId, AddItemRequest req) {
+        // Business validation: Kiểm tra cart có tồn tại không
         Cart cart = cartRepository.findByUserId(userId);
+        if (cart == null) {
+            throw new ResourceNotFoundException("Cart", "userId", userId);
+        }
+        
+        // Business validation: Kiểm tra product có tồn tại không
         Product product = productService.findById(req.getProductId());
         CartItem isPresent = cartItemService.isCartItemExists(userId, req.getProductId());
         if(isPresent == null){
@@ -50,7 +60,6 @@ public class CartImpService implements CartService {
             cartItem.setDiscountPrice(req.getQuantity() * req.getDiscountPrice());
             CartItem createCartItem = cartItemService.createCartItem(cartItem);
 
-            // System.out.println(cart.getCartItems().size());
             cart.getCartItems().add(createCartItem);
             cart.setTotalPrice(cart.getTotalPrice() + createCartItem.getPrice());
             cart.setTotalDiscountPrice(cart.getTotalDiscountPrice() + createCartItem.getDiscountPrice());
@@ -67,7 +76,6 @@ public class CartImpService implements CartService {
             cart.setTotalDiscountPrice(cart.getTotalDiscountPrice() + req.getQuantity() * req.getDiscountPrice());
             cart.setDiscount(cart.getTotalPrice() - cart.getTotalDiscountPrice());
             cartRepository.save(cart);
-            
         }
         return product;
     }

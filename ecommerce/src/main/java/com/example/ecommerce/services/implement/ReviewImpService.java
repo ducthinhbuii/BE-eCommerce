@@ -1,8 +1,10 @@
-package com.example.ecommerce.services;
+package com.example.ecommerce.services.implement;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import com.example.ecommerce.services.ProductService;
+import com.example.ecommerce.services.ReviewService;
 import org.springframework.stereotype.Service;
 
 import com.example.ecommerce.model.Product;
@@ -13,7 +15,7 @@ import com.example.ecommerce.repository.ReviewRepository;
 import com.example.ecommerce.request.ReviewRequest;
 
 @Service
-public class ReviewImpService implements ReviewService{
+public class ReviewImpService implements ReviewService {
 
     private ReviewRepository reviewRepository;
     private ProductService productService;

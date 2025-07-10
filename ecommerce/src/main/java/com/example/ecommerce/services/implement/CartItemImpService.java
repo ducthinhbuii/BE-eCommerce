@@ -1,7 +1,8 @@
-package com.example.ecommerce.services;
+package com.example.ecommerce.services.implement;
 
 import java.util.Optional;
 
+import com.example.ecommerce.services.CartItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -18,7 +19,7 @@ import com.example.ecommerce.repository.UserRepository;
 import com.example.ecommerce.request.AddItemRequest;
 
 @Service
-public class CartItemImpService implements CartItemService{
+public class CartItemImpService implements CartItemService {
 
     private CartItemRepository cartItemRepository;
     private UserRepository userRepository;

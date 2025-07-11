@@ -7,11 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.example.ecommerce.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -26,25 +24,29 @@ import com.example.ecommerce.repository.ProductRepository;
 import com.example.ecommerce.repository.SizeRepository;
 import com.example.ecommerce.request.CreateProductRequest;
 import com.example.ecommerce.exception.ResourceNotFoundException;
+import com.example.ecommerce.mapper.ProductMapper;
+import com.example.ecommerce.dto.ProductDto;
 
 @Service
 public class ProductImpService implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final SizeRepository sizeRepository;
+    private final ProductMapper productMapper;
 
     public ProductImpService(ProductRepository productRepository, CategoryRepository categoryRepository,
-                            SizeRepository sizeRepository) {
+                            SizeRepository sizeRepository, ProductMapper productMapper) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.sizeRepository = sizeRepository;
+        this.productMapper = productMapper;
     }
 
     @Autowired
     private MongoTemplate mongoTemplate;
 
     @Override
-    public Product createProduct(CreateProductRequest req){
+    public ProductDto createProduct(CreateProductRequest req){
         // Business validation: Kiểm tra category có tồn tại không
         List<Category> categories = categoryRepository.findByCategoryId(req.getCategoryId());
         if (categories == null || categories.isEmpty()) {
@@ -110,16 +112,28 @@ public class ProductImpService implements ProductService {
         product.setSize(size);
 
         Product savedProduct = productRepository.save(product);
-        return savedProduct;
+        return productMapper.toDto(savedProduct);
     }
 
     @Override
-    public List<Product> findAll(){
-        return productRepository.findAll();
+    public List<ProductDto> findAll(){
+        List<Product> products = productRepository.findAll();
+        return productMapper.toDtoList(products);
     }
 
     @Override
-    public Product findById(String theId) {
+    public ProductDto findById(String theId) {
+        Optional<Product> result = productRepository.findById(theId);
+
+        if (result.isPresent()) {
+            return productMapper.toDto(result.get());
+        } else {
+            throw new ResourceNotFoundException("Product", "id", theId);
+        }
+    }
+    
+    @Override
+    public Product findProductById(String theId) {
         Optional<Product> result = productRepository.findById(theId);
 		
 		if (result.isPresent()) {
@@ -152,13 +166,14 @@ public class ProductImpService implements ProductService {
     }
 
     @Override
-    public Product updateProduct(String ProductId, Product req){
+    public ProductDto updateProduct(String ProductId, Product req){
         Optional<Product> productOp = productRepository.findById(ProductId);
         if(productOp.isPresent()){
             Product product = productOp.get();
             Category category = categoryRepository.findByCategoryId(req.getCategory().getCategoryId()).get(0);
             product.setCategory(category);
-            return productRepository.save(product);
+            Product updatedProduct = productRepository.save(product);
+            return productMapper.toDto(updatedProduct);
         } else {
             throw new ResourceNotFoundException("Product", "id", ProductId);
         }

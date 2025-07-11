@@ -7,16 +7,19 @@ import org.springframework.data.domain.Page;
 
 import com.example.ecommerce.model.Product;
 import com.example.ecommerce.request.CreateProductRequest;
+import com.example.ecommerce.dto.ProductDto;
 
 public interface ProductService {
 
 	public Map<String, Object> fillterProducts(String category,Integer minPrice,Integer maxPrice,Integer minDiscount,String sort, Integer pageNumber, Integer pageSize, String name);
 
-	public Product createProduct(CreateProductRequest req);
+	public ProductDto createProduct(CreateProductRequest req);
 
-    List<Product> findAll();
+    List<ProductDto> findAll();
 	
-	Product findById(String theId);
+	ProductDto findById(String theId);
+
+	public Product findProductById(String theId);
 
 	public Map<String, Object>getAllProduct(String category, ArrayList<String> colors, ArrayList<String> sizes,
                                     Integer minPrice, Integer maxPrice, Integer minDiscount, String sort, String stock,
@@ -26,5 +29,5 @@ public interface ProductService {
 	
 	void deleteById(String theId);
 
-	Product updateProduct(String ProductId, Product req);
+	ProductDto updateProduct(String ProductId, Product req);
 }

@@ -26,7 +26,7 @@ public class RatingImpService implements RatingService {
 
     @Override
     public Rating createRating(RatingRequest req, Users user) {
-        Product product = productService.findById(req.getProductId());
+        Product product = productService.findProductById(req.getProductId());
         Rating rating = new Rating();
         rating.setProduct(product);
         rating.setRating(req.getRating());

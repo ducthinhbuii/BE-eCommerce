@@ -6,8 +6,12 @@ import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.ecommerce.dto.AddressDto;
+import com.example.ecommerce.dto.UserDto;
 import com.example.ecommerce.exception.ConflictException;
 import com.example.ecommerce.exception.ResourceNotFoundException;
+import com.example.ecommerce.mapper.AddressMapper;
+import com.example.ecommerce.mapper.UserMapper;
 import com.example.ecommerce.model.Address;
 import com.example.ecommerce.model.Users;
 import com.example.ecommerce.repository.UserRepository;
@@ -20,11 +24,16 @@ public class UserImpService implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final CartService cartService;
+    private final UserMapper userMapper;
+    private final AddressMapper addressMapper;
     
-    public UserImpService(UserRepository userRepository, PasswordEncoder passwordEncoder, CartService cartService) {
+    public UserImpService(UserRepository userRepository, PasswordEncoder passwordEncoder, CartService cartService,
+                            UserMapper userMapper, AddressMapper addressMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.cartService = cartService;
+        this.userMapper = userMapper;
+        this.addressMapper = addressMapper;
     }
     
     @Override
@@ -61,8 +70,8 @@ public class UserImpService implements UserService {
     }
     
     @Override
-    public List<Users> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDto> getAllUsers() {
+        return userMapper.toDtoList(userRepository.findAll());
     }
     
     @Override
@@ -78,9 +87,9 @@ public class UserImpService implements UserService {
     }
     
     @Override
-    public List<Address> getUserAddresses(String userId) {
+    public List<AddressDto> getUserAddresses(String userId) {
         Users user = getUserById(userId); // Sẽ throw exception nếu không tìm thấy
-        return user.getListAddress();
+        return addressMapper.toDtoList(user.getListAddress());
     }
     
     @Override

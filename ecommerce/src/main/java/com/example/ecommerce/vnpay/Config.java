@@ -16,16 +16,35 @@ import java.util.stream.Collectors;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 
 
+@Component
 public class Config {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     public static String vnp_ReturnUrl = "http://localhost:5173/payment-info";
-    public static String vnp_TmnCode = "TF3IOVD9";
-    public static String secretKey = "WZANSM5WOAZA14I0WWCW5UJ03R4XB65T";
-    public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
 
+    @Value("${VNP_TMNCODE}")
+    private String vnp_TmnCode;
+
+    @Value("${VNP_SECRETKEY}")
+    private String secretKey;
+
+    public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
+    
+    // Getter methods for accessing the values
+    public String getVnp_TmnCode() {
+        return vnp_TmnCode;
+    }
+    
+    public String getSecretKey() {
+        return secretKey;
+    }
+    
     public static String md5(String message) {
         String digest = null;
         try {
@@ -63,7 +82,7 @@ public class Config {
     }
 
     //Util for VNPAY
-    public static String hashAllFields(Map fields) {
+    public String hashAllFields(Map fields) {
         List fieldNames = new ArrayList(fields.keySet());
         Collections.sort(fieldNames);
         StringBuilder sb = new StringBuilder();
@@ -80,7 +99,7 @@ public class Config {
                 sb.append("&");
             }
         }
-        return hmacSHA512(secretKey,sb.toString());
+        return hmacSHA512(this.secretKey,sb.toString());
     }
     
     public static String hmacSHA512(final String key, final String data) {

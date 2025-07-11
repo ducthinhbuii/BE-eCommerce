@@ -3,6 +3,8 @@ package com.example.ecommerce.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.ecommerce.dto.AddressDto;
+import com.example.ecommerce.dto.UserDto;
 import com.example.ecommerce.model.Address;
 import com.example.ecommerce.model.Users;
 
@@ -27,7 +29,7 @@ public interface UserService {
      * Lấy danh sách tất cả users
      * @return danh sách users
      */
-    List<Users> getAllUsers();
+    List<UserDto> getAllUsers();
     
     /**
      * Lấy thông tin user theo ID
@@ -48,7 +50,7 @@ public interface UserService {
      * @param userId ID của user
      * @return danh sách địa chỉ
      */
-    List<Address> getUserAddresses(String userId);
+    List<AddressDto> getUserAddresses(String userId);
     
     /**
      * Xóa user theo username

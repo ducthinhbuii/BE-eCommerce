@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.ecommerce.dto.CategoryDto;
 import com.example.ecommerce.model.Category;
 import com.example.ecommerce.services.CategoryService;
 import com.example.ecommerce.request.CategoryRequest;
@@ -25,17 +26,17 @@ public class CategoryController {
     }
 
     @GetMapping("/get-all")
-    public List<Category> getAllCategory(){
+    public List<CategoryDto> getAllCategory(){
         return categoryService.getAllCategories();
     }
 
     @GetMapping("/get-top-cat")
-    public List<Category> getTopCategory(){
+    public List<CategoryDto> getTopCategory(){
         return categoryService.getTopCategories();
     }
 
     @GetMapping("/get-by-parent")
-    public Category getCategoryByNameAndParent(
+    public CategoryDto getCategoryByNameAndParent(
         @RequestParam(required = false) String categoryName,
         @RequestParam(required = false) String categoryParentName
         ){
@@ -43,7 +44,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{categoryId}")
-    public List<Category> getById(@PathVariable String categoryId){
+    public List<CategoryDto> getById(@PathVariable String categoryId){
         return categoryService.getCategoryById(categoryId);
     }
 

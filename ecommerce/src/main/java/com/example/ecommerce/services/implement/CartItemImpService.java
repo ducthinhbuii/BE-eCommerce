@@ -9,30 +9,20 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import com.example.ecommerce.model.Cart;
 import com.example.ecommerce.model.CartItem;
-import com.example.ecommerce.model.Product;
-import com.example.ecommerce.model.Users;
 import com.example.ecommerce.repository.CartItemRepository;
-import com.example.ecommerce.repository.CartRepository;
-import com.example.ecommerce.repository.UserRepository;
 import com.example.ecommerce.request.AddItemRequest;
 
 @Service
 public class CartItemImpService implements CartItemService {
 
     private CartItemRepository cartItemRepository;
-    private UserRepository userRepository;
-    private CartRepository cartRepository;
 
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    public CartItemImpService(CartItemRepository cartItemRepository, UserRepository userRepository,
-            CartRepository cartRepository) {
+    public CartItemImpService(CartItemRepository cartItemRepository) {
         this.cartItemRepository = cartItemRepository;
-        this.userRepository = userRepository;
-        this.cartRepository = cartRepository;
     }
 
     @Override

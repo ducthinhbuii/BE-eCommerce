@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.ecommerce.dto.CategoryDto;
 import com.example.ecommerce.exception.ConflictException;
 import com.example.ecommerce.exception.ResourceNotFoundException;
+import com.example.ecommerce.mapper.CategoryMapper;
 import com.example.ecommerce.model.Category;
 import com.example.ecommerce.repository.CategoryRepository;
 import com.example.ecommerce.request.CategoryRequest;
@@ -16,38 +18,40 @@ import com.example.ecommerce.services.CategoryService;
 public class CategoryImpService implements CategoryService {
     
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
     
-    public CategoryImpService(CategoryRepository categoryRepository) {
+    public CategoryImpService(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
         this.categoryRepository = categoryRepository;
+        this.categoryMapper = categoryMapper;
     }
     
     @Override
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryDto> getAllCategories() {
+        return categoryMapper.toDtoList(categoryRepository.findAll());
     }
     
     @Override
-    public List<Category> getTopCategories() {
-        return categoryRepository.findTopCategory();
+    public List<CategoryDto> getTopCategories() {
+        return categoryMapper.toDtoList(categoryRepository.findTopCategory());
     }
     
     @Override
-    public Category getCategoryByNameAndParent(String categoryName, String categoryParentName) {
+    public CategoryDto getCategoryByNameAndParent(String categoryName, String categoryParentName) {
         Category category = categoryRepository.findByNameAndParent(categoryName, categoryParentName);
         if (category == null) {
             throw new ResourceNotFoundException("Category", "name and parent", 
                 categoryName + " with parent " + categoryParentName);
         }
-        return category;
+        return categoryMapper.toDto(category);
     }
     
     @Override
-    public List<Category> getCategoryById(String categoryId) {
+    public List<CategoryDto> getCategoryById(String categoryId) {
         List<Category> categories = categoryRepository.findByCategoryId(categoryId);
         if (categories.isEmpty()) {
             throw new ResourceNotFoundException("Category", "id", categoryId);
         }
-        return categories;
+        return  categoryMapper.toDtoList(categories);
     }
     
     @Override

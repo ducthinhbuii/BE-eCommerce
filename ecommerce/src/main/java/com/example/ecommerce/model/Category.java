@@ -62,14 +62,6 @@ public class Category {
         this.level = level;
     }
 
-    public String getCategoryParent() {
-        return categoryParentId;
-    }
-
-    public void setCategoryParent(String categoryParent) {
-        this.categoryParentId = categoryParent;
-    }
-
     public String getCategoryParentName() {
         return categoryParentName;
     }

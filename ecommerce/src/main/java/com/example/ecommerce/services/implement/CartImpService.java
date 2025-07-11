@@ -47,7 +47,7 @@ public class CartImpService implements CartService {
         }
         
         // Business validation: Kiểm tra product có tồn tại không
-        Product product = productService.findById(req.getProductId());
+        Product product = productService.findProductById(req.getProductId());
         CartItem isPresent = cartItemService.isCartItemExists(userId, req.getProductId());
         if(isPresent == null){
             CartItem cartItem = new CartItem();

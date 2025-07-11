@@ -36,6 +36,8 @@ import com.example.ecommerce.request.LoginRequest;
 import com.example.ecommerce.response.AuthenticationReponse;
 import com.example.ecommerce.services.UserService;
 import com.example.ecommerce.services.jwt.JWTService;
+import com.example.ecommerce.dto.AddressDto;
+import com.example.ecommerce.dto.UserDto;
 import com.example.ecommerce.exception.ResourceNotFoundException;
 
 import jakarta.validation.Valid;
@@ -112,13 +114,13 @@ public class UserController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<Users>> getAllUsers(){
+    public ResponseEntity<List<UserDto>> getAllUsers(){
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/address/{userId}")
-    public ResponseEntity<List<Address>> getAddressUser(@PathVariable String userId) {
-        List<Address> addresses = userService.getUserAddresses(userId);
+    public ResponseEntity<List<AddressDto>> getAddressUser(@PathVariable String userId) {
+        List<AddressDto> addresses = userService.getUserAddresses(userId);
         return ResponseEntity.ok(addresses);
     }
 

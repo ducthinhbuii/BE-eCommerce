@@ -30,7 +30,7 @@ public class ReviewImpService implements ReviewService {
 
     @Override
     public Review createReview(ReviewRequest req, Users user) {
-        Product product = productService.findById(req.getProductId());
+        Product product = productService.findProductById(req.getProductId());
         Review review = new Review();
         review.setProduct(product);
         review.setReviewText(req.getReview());

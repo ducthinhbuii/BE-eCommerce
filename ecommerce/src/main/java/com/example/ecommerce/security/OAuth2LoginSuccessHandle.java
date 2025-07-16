@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -27,12 +28,16 @@ public class OAuth2LoginSuccessHandle extends SavedRequestAwareAuthenticationSuc
         this.jwtService = jwtService;
     }
 
+    @Value("${FE_URL}")
+    private String FE_URL;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
         String jwt = jwtService.generateTokenLogin(email);
-        response.sendRedirect("http://localhost:5173/oauth2-redirect?token=" + jwt);
+        String redirectUrl = FE_URL + "oauth2-redirect?token=" + jwt;
+        response.sendRedirect(redirectUrl);
     }
     
     

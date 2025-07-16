@@ -62,6 +62,7 @@ public class AppConfig{
                             .requestMatchers("/api/user/login").permitAll()
                             .requestMatchers("/api/user/register").permitAll()
                             .requestMatchers("/test").permitAll()
+                            .requestMatchers("/swagger-ui/index.html").permitAll()
                             .anyRequest().authenticated()
                             )
                 

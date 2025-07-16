@@ -15,7 +15,7 @@ public class EcommerceApplication {
 
 	public static void main(String[] args) {
 		
-		Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+		Dotenv dotenv = Dotenv.configure().directory("ecommerce").filename(".env").ignoreIfMissing().load();
 		dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
 		String googleClientId = dotenv.get("GOOGLE_CLIENT_ID");
 		System.out.println("GOOGLE_CLIENT_ID: " + googleClientId);

@@ -41,6 +41,10 @@ import com.example.ecommerce.dto.UserDto;
 import com.example.ecommerce.exception.ResourceNotFoundException;
 
 import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @RestController
 @RequestMapping("/api/user")
@@ -58,6 +62,20 @@ public class UserController {
         this.jwtService = jwtService;
     }
 
+    @Operation(
+        summary = "User login",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Login successful",
+                content = @Content(schema = @Schema(implementation = AuthenticationReponse.class))
+            ),
+            @ApiResponse(
+                responseCode = "400",
+                description = "Invalid credentials"
+            )
+        }
+    )
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest user) {
         System.out.println(user);
@@ -74,6 +92,15 @@ public class UserController {
                                     .build());
     }
 
+    @Operation(
+        summary = "Google OAuth2 login",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Google login successful"
+            )
+        }
+    )
     @GetMapping("/login-google")
     public Map<String, Object> loginGoogle(OAuth2AuthenticationToken authentication) {
         System.out.println("Login google");
@@ -89,6 +116,15 @@ public class UserController {
         return oauth2User.getAttributes();
     }
 
+    @Operation(
+        summary = "Get Google OAuth2 access token",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Returns Google access token"
+            )
+        }
+    )
     @GetMapping("/access-token")
     public String home(@AuthenticationPrincipal OidcUser principal) {
         OAuth2AuthorizedClient authorizedClient = authorizedClientService
@@ -101,35 +137,93 @@ public class UserController {
         return accessToken;
     }
 
+    @Operation(
+        summary = "Register new user",
+        responses = {
+            @ApiResponse(
+                responseCode = "201",
+                description = "User registered successfully"
+            )
+        }
+    )
     @PostMapping("/register")
     public ResponseEntity<?> addUser(@RequestBody Users user){
         Users registeredUser = userService.registerUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
     }
 
+    @Operation(
+        summary = "Update user info",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "User updated successfully"
+            )
+        }
+    )
     @PostMapping("/update/{userId}")
     public ResponseEntity<?> updateUser(@PathVariable String userId, @RequestBody Users newUser){
         Users updatedUser = userService.updateUser(userId, newUser);
         return ResponseEntity.ok("update user successfully");
     }
 
+    @Operation(
+        summary = "Get all users",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "List of users",
+                content = @Content(schema = @Schema(implementation = UserDto.class))
+            )
+        }
+    )
     @GetMapping("")
     public ResponseEntity<List<UserDto>> getAllUsers(){
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    @Operation(
+        summary = "Get user addresses",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "List of addresses",
+                content = @Content(schema = @Schema(implementation = AddressDto.class))
+            )
+        }
+    )
     @GetMapping("/address/{userId}")
     public ResponseEntity<List<AddressDto>> getAddressUser(@PathVariable String userId) {
         List<AddressDto> addresses = userService.getUserAddresses(userId);
         return ResponseEntity.ok(addresses);
     }
 
+    @Operation(
+        summary = "Get current user info",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "User info",
+                content = @Content(schema = @Schema(implementation = Users.class))
+            )
+        }
+    )
     @GetMapping("/me")
     public ResponseEntity<Object> getUser(@AuthenticationPrincipal UserDetails currentUser) {
         Users user = userService.getUserByUsername(currentUser.getUsername());
         return ResponseEntity.ok(user);
     }
 
+    @Operation(
+        summary = "Get Google user info (OIDC)",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "User info",
+                content = @Content(schema = @Schema(implementation = Users.class))
+            )
+        }
+    )
     @GetMapping("/google/me")
     public ResponseEntity<Object> getUser(@AuthenticationPrincipal OidcUser oidcUser) {
         if (oidcUser != null) {
@@ -140,11 +234,29 @@ public class UserController {
         throw new ResourceNotFoundException("User", "OAuth2", "not found");
     }
     
+    @Operation(
+        summary = "Get Google user info (OAuth2)",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Google user info"
+            )
+        }
+    )
     @GetMapping("/gg-me")
     public Map<String, Object> getUser(@AuthenticationPrincipal OAuth2User principal) {
         return principal.getAttributes(); // Google user info
     }
 
+    @Operation(
+        summary = "Delete user by username",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "User deleted successfully"
+            )
+        }
+    )
     @DeleteMapping("/{userName}")
     public ResponseEntity<?> deleteUser(@PathVariable String userName) {
         userService.deleteUserByUsername(userName);

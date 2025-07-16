@@ -26,6 +26,10 @@ import com.example.ecommerce.services.implement.OrderImpService;
 import com.example.ecommerce.vnpay.Config;
 
 import jakarta.servlet.http.HttpServletRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @RestController
 @RequestMapping("/api/payment")
@@ -41,6 +45,16 @@ public class PaymentController {
         this.config = config;
     }
 
+    @Operation(
+        summary = "Create payment",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Payment created",
+                content = @Content(schema = @Schema(implementation = PaymentResponse.class))
+            )
+        }
+    )
     @PostMapping("/create-payment")
     public ResponseEntity<?> createPayment(@RequestBody VNPayRequest req ,HttpServletRequest httpServletRequest) throws UnsupportedEncodingException{
         String vnp_Version = "2.1.0";
@@ -85,6 +99,16 @@ public class PaymentController {
         return ResponseEntity.status(HttpStatus.OK).body(paymentResponse);
     }
 
+    @Operation(
+        summary = "Get payment info",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Payment info",
+                content = @Content(schema = @Schema(implementation = PaymentInfoResponse.class))
+            )
+        }
+    )
     @GetMapping("/payment-info")
     public ResponseEntity<?> paymentInfo(
         @RequestParam("vnp_Amount") String vnp_Amount,
@@ -103,6 +127,15 @@ public class PaymentController {
         return ResponseEntity.status(HttpStatus.OK).body(paymentInfoResponse);
     }
 
+    @Operation(
+        summary = "Update payment info",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Payment info updated"
+            )
+        }
+    )
     @GetMapping("/update-payment")
     public ResponseEntity<?> updatePaymentInfo(
         @RequestParam("orderId") String orderId,

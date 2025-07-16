@@ -18,6 +18,10 @@ import com.example.ecommerce.services.implement.ProductImpService;
 import com.example.ecommerce.dto.ProductDto;
 
 import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 
 @RestController
@@ -29,16 +33,46 @@ public class ProductController {
         this.productImpService = productImpService;
     }
 
+    @Operation(
+        summary = "Get all products",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "List of products",
+                content = @Content(schema = @Schema(implementation = ProductDto.class))
+            )
+        }
+    )
     @GetMapping("/get-all")
     public ResponseEntity<List<ProductDto>> getAllProducts(){
         return ResponseEntity.ok(productImpService.findAll());
     }
 
+    @Operation(
+        summary = "Create new product",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Product created",
+                content = @Content(schema = @Schema(implementation = ProductDto.class))
+            )
+        }
+    )
     @PostMapping("/create-product")
     public ResponseEntity<ProductDto> createProduct(@Valid @RequestBody CreateProductRequest req){
         return ResponseEntity.ok(productImpService.createProduct(req));
     }
 
+    @Operation(
+        summary = "Get filtered products",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Filtered products",
+                content = @Content(schema = @Schema(implementation = ProductDto.class))
+            )
+        }
+    )
     @GetMapping("/")
     public ResponseEntity<Map<String, Object>> getFilterProduct(@RequestParam(required = false) String category,@RequestParam(required = false) ArrayList<String> colors,@RequestParam(required = false) ArrayList<String> sizes,
                                    @RequestParam(required = false) Integer minPrice,@RequestParam(required = false) Integer maxPrice,@RequestParam(required = false) Integer minDiscount,@RequestParam(required = false) String sort,@RequestParam(required = false) String stock,
@@ -49,11 +83,31 @@ public class ProductController {
         return ResponseEntity.ok(results);
     }
 
+    @Operation(
+        summary = "Get product by id",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Product info",
+                content = @Content(schema = @Schema(implementation = ProductDto.class))
+            )
+        }
+    )
     @GetMapping("/{productId}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable String productId){
         return ResponseEntity.ok(productImpService.findById(productId));
     }
 
+    @Operation(
+        summary = "Update product by id",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Product updated",
+                content = @Content(schema = @Schema(implementation = ProductDto.class))
+            )
+        }
+    )
     @PostMapping("/update/{productId}")
     public ResponseEntity<ProductDto> updateProductById(@PathVariable String productId, @RequestBody Product req){
         ProductDto updatedProduct = productImpService.updateProduct(productId, req);

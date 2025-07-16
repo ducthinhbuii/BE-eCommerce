@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+VALIDATION_GUIDE.md
+.env
+VNPAY_SETUP.md

@@ -3,20 +3,39 @@ package com.example.ecommerce.request;
 import java.util.HashSet;
 import java.util.Set;
 
-
 import com.example.ecommerce.model.Category;
 import com.example.ecommerce.model.Size;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
+
 public class CreateProductRequest {
+    @NotBlank(message = "Name is required")
     private String name;
+
     private String description;
-    private int price;
-    private int discountPrice;
-    private int discountPercent;
-    private int quantity;
+
+    @NotNull(message = "Price is required")
+    @Positive(message = "Price must be positive")
+    private Integer price;
+
+    @NotNull(message = "Discount Price is required")
+    @Min(value = 0, message = "Discount Price must be non-negative")
+    private Integer discountPrice;
+    
+    @Min(value = 0, message = "Discount Percent must be non-negative")
+    private Integer discountPercent;
+    
+    @Min(value = 0, message = "Quantity must be non-negative")
+    private Integer quantity;
+    
     private String brand;
     private String color;
     private String imgUrl;
+
+    @NotBlank(message = "Category is required")
     private String categoryId;
 
     private Set<Size> size = new HashSet<>();
@@ -39,28 +58,28 @@ public class CreateProductRequest {
     public void setDescription(String description) {
         this.description = description;
     }
-    public int getPrice() {
+    public Integer getPrice() {
         return price;
     }
-    public void setPrice(int price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
-    public int getDiscountPrice() {
+    public Integer getDiscountPrice() {
         return discountPrice;
     }
-    public void setDiscountPrice(int discountPrice) {
+    public void setDiscountPrice(Integer discountPrice) {
         this.discountPrice = discountPrice;
     }
-    public int getDiscountPercent() {
+    public Integer getDiscountPercent() {
         return discountPercent;
     }
-    public void setDiscountPercent(int discountPercent) {
+    public void setDiscountPercent(Integer discountPercent) {
         this.discountPercent = discountPercent;
     }
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
     public String getBrand() {
@@ -111,7 +130,4 @@ public class CreateProductRequest {
     public void setThirdLeverCategory(String thirdLeverCategory) {
         this.thirdLeverCategory = thirdLeverCategory;
     }
-
-    
-
 }

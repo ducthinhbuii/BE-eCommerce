@@ -3,6 +3,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -45,6 +46,9 @@ public class AppConfig{
     @Autowired
     private OAuth2LoginSuccessHandle oAuth2LoginSuccessHandle;
 
+    @Value("${FE_URL}")
+    private String FE_URL;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         
@@ -56,14 +60,13 @@ public class AppConfig{
                             .requestMatchers("/api/category/**").permitAll()
                             .requestMatchers("/api/product/**").permitAll()
                             .requestMatchers("/api/user/login").permitAll()
-                            .requestMatchers("/api/user/regiser").permitAll()
+                            .requestMatchers("/api/user/register").permitAll()
                             .requestMatchers("/test").permitAll()
-                            .requestMatchers("/api/user").hasRole("ADMIN")
                             .anyRequest().authenticated()
                             )
                 
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))    
+                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))    
                 // .formLogin(Customizer.withDefaults())
                 .oauth2Login(
                     oauth2 -> oauth2
@@ -83,7 +86,7 @@ public class AppConfig{
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*"));
+        configuration.setAllowedOrigins(List.of(FE_URL));
         configuration.setAllowedMethods(Arrays.asList("GET","POST"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

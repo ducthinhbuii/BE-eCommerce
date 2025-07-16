@@ -4,10 +4,15 @@ spring:
       client:
         registration:
           google:
-            clientId: 266057497231-npgv5va40dqo9t3csjmhc8rp1583n7uo.apps.googleusercontent.com
-            clientSecret: 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
-            redirect-uri: "https://be-ecommerce-zyst.onrender.com/login/oauth2/code/google"
-
+            clientId: ${GOOGLE_CLIENT_ID}
+            clientSecret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: "http://localhost:8081/login/oauth2/code/google"
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
+            user-name-attribute: sub
 server:
   port: 8081
 # ...

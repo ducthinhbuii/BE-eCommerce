@@ -43,6 +43,7 @@ public class CustomOidcUserService implements OAuth2UserService<OidcUserRequest,
         if(user.isEmpty()){
             Users u = new Users();
             u.setUsername(email);
+            u.setPassword(email);   
             u.setFirstName(partName[0]);
             u.setLastName(partName[1]);
             LocalDateTime now = LocalDateTime.now(); 

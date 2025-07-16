@@ -32,35 +32,34 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.ecommerce.model.Address;
 import com.example.ecommerce.model.Users;
-import com.example.ecommerce.repository.UserRepository;
 import com.example.ecommerce.request.LoginRequest;
 import com.example.ecommerce.response.AuthenticationReponse;
-import com.example.ecommerce.services.CartService;
+import com.example.ecommerce.services.UserService;
 import com.example.ecommerce.services.jwt.JWTService;
+import com.example.ecommerce.dto.AddressDto;
+import com.example.ecommerce.dto.UserDto;
+import com.example.ecommerce.exception.ResourceNotFoundException;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final CartService cartService;
+    private final UserService userService;
     private AuthenticationManager authenticationManager;
     private JWTService jwtService;
 
     @Autowired
     private OAuth2AuthorizedClientService authorizedClientService;
 
-    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder, CartService cartService,
-                            AuthenticationManager authenticationManager, JWTService jwtService) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.cartService = cartService;
+    public UserController(UserService userService, AuthenticationManager authenticationManager, JWTService jwtService) {
+        this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest user) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest user) {
         System.out.println(user);
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
@@ -68,7 +67,7 @@ public class UserController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = jwtService.generateTokenLogin(user);
+        String jwt = jwtService.generateTokenLogin(user.getUsername());
         return ResponseEntity.ok(AuthenticationReponse.builder()
                                     .token(jwt)
                                     .authenticated(true)
@@ -103,88 +102,52 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity addUser(@RequestBody Users user){
-        try {
-            if(userRepository.findByUsername(user.getUsername()).isPresent()){
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Username has already exists");
-            }
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            LocalDateTime now = LocalDateTime.now(); 
-            user.setCreateAt(now);
-            userRepository.save(user);
-
-            cartService.createCart(user);
-
-            return ResponseEntity.ok(HttpStatus.CREATED);
-        } catch (Exception e){
-            return ResponseEntity.internalServerError().body(e.getMessage());
-        }
-
+    public ResponseEntity<?> addUser(@RequestBody Users user){
+        Users registeredUser = userService.registerUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
     }
 
     @PostMapping("/update/{userId}")
     public ResponseEntity<?> updateUser(@PathVariable String userId, @RequestBody Users newUser){
-        Optional<Users> user = userRepository.findById(userId);
-        if(user.isPresent()){
-            Users currentUser = user.get();
-            currentUser.setFirstName(newUser.getFirstName());
-            currentUser.setLastName(newUser.getLastName());
-            currentUser.setEmail(newUser.getEmail());
-            currentUser.setAvatar(newUser.getAvatar());
-            userRepository.save(currentUser);
-            return ResponseEntity.ok("update user successfully");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+        Users updatedUser = userService.updateUser(userId, newUser);
+        return ResponseEntity.ok("update user successfully");
     }
 
     @GetMapping("")
-    public ResponseEntity<List<Users>> getAllUsers(){
-        return ResponseEntity.ok(this.userRepository.findAll());
+    public ResponseEntity<List<UserDto>> getAllUsers(){
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/address/{userId}")
-    public ResponseEntity<List<Address>> getAddressUser(@PathVariable String userId) {
-        Optional<Users> user = userRepository.findById(userId);
-        if(user.isPresent()){
-            return ResponseEntity.ok(user.get().getListAddress());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+    public ResponseEntity<List<AddressDto>> getAddressUser(@PathVariable String userId) {
+        List<AddressDto> addresses = userService.getUserAddresses(userId);
+        return ResponseEntity.ok(addresses);
     }
 
     @GetMapping("/me")
     public ResponseEntity<Object> getUser(@AuthenticationPrincipal UserDetails currentUser) {
-        Optional<Users> user = userRepository.findByUsername(currentUser.getUsername());
-        if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
+        Users user = userService.getUserByUsername(currentUser.getUsername());
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping("/google/me")
     public ResponseEntity<Object> getUser(@AuthenticationPrincipal OidcUser oidcUser) {
-        if(oidcUser != null){
+        if (oidcUser != null) {
             System.out.println(oidcUser.getEmail());
-            Optional<Users> user = userRepository.findByUsername(oidcUser.getEmail());
-            if (user.isPresent()) {
-                return ResponseEntity.ok(user.get());
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-            }
+            Users user = userService.getUserByUsername(oidcUser.getEmail());
+            return ResponseEntity.ok(user);
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        throw new ResourceNotFoundException("User", "OAuth2", "not found");
+    }
+    
+    @GetMapping("/gg-me")
+    public Map<String, Object> getUser(@AuthenticationPrincipal OAuth2User principal) {
+        return principal.getAttributes(); // Google user info
     }
 
     @DeleteMapping("/{userName}")
-    public ResponseEntity addUser(@PathVariable String userName) {
-        Optional<Users> user = userRepository.findByUsername(userName);
-        if (user.isPresent()) {
-            this.userRepository.deleteByUsername(userName);
-            return ResponseEntity.ok("Delete user: " + userName + " Successfull");
-        } else {
-            return ResponseEntity.ok(userName + " not found");
-        }
+    public ResponseEntity<?> deleteUser(@PathVariable String userName) {
+        userService.deleteUserByUsername(userName);
+        return ResponseEntity.ok("Delete user: " + userName + " Successfully");
     }
 }

@@ -8,5 +8,6 @@ import com.example.ecommerce.model.Users;
 
 public interface UserRepository extends MongoRepository<Users, String> {
     Optional<Users> findByUsername(String username);
+    Optional<Users> findByEmail(String email);
     Optional<Users> deleteByUsername(String username);
 }

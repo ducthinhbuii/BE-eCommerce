@@ -1,22 +1,15 @@
 package com.example.ecommerce.controller;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +22,7 @@ import com.example.ecommerce.repository.PaymentDetailRepository;
 import com.example.ecommerce.request.VNPayRequest;
 import com.example.ecommerce.response.PaymentInfoResponse;
 import com.example.ecommerce.response.PaymentResponse;
-import com.example.ecommerce.services.OrderImpService;
+import com.example.ecommerce.services.implement.OrderImpService;
 import com.example.ecommerce.vnpay.Config;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,17 +33,19 @@ public class PaymentController {
 
     private OrderImpService orderImpService;
     private PaymentDetailRepository paymentDetailRepository;
+    private Config config;
 
-    public PaymentController(OrderImpService orderImpService, PaymentDetailRepository paymentDetailRepository) {
+    public PaymentController(OrderImpService orderImpService, PaymentDetailRepository paymentDetailRepository, Config config) {
         this.orderImpService = orderImpService;
         this.paymentDetailRepository = paymentDetailRepository;
+        this.config = config;
     }
 
     @PostMapping("/create-payment")
     public ResponseEntity<?> createPayment(@RequestBody VNPayRequest req ,HttpServletRequest httpServletRequest) throws UnsupportedEncodingException{
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
-        String vnp_TmnCode = Config.vnp_TmnCode;
+        String vnp_TmnCode = config.getVnp_TmnCode();
         String orderType = "order";
         long amount = req.getTotalPrice() * 100;
         String bankCode = "NCB";
@@ -79,7 +74,7 @@ public class PaymentController {
         vnpParamsMap.put("vnp_IpAddr", Config.getIpAddress(httpServletRequest));
         String queryUrl = Config.getPaymentURL(vnpParamsMap, true);
         String hashData = Config.getPaymentURL(vnpParamsMap, false);
-        String vnpSecureHash = Config.hmacSHA512(Config.secretKey, hashData);
+        String vnpSecureHash = Config.hmacSHA512(config.getSecretKey(), hashData);
         queryUrl += "&vnp_SecureHash=" + vnpSecureHash;
         String paymentUrl = Config.vnp_PayUrl + "?" + queryUrl;
 
@@ -195,7 +190,7 @@ public class PaymentController {
     //         }
     //     }
     //     String queryUrl = query.toString();
-    //     String vnp_SecureHash = Config.hmacSHA512(Config.secretKey, hashData.toString());
+
     //     queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
     //     String paymentUrl = Config.vnp_PayUrl + "?" + queryUrl;
     //     // com.google.gson.JsonObject job = new JsonObject();

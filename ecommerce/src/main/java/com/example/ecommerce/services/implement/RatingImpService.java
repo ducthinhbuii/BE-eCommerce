@@ -1,8 +1,10 @@
-package com.example.ecommerce.services;
+package com.example.ecommerce.services.implement;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import com.example.ecommerce.services.ProductService;
+import com.example.ecommerce.services.RatingService;
 import org.springframework.stereotype.Service;
 
 import com.example.ecommerce.model.Product;
@@ -24,7 +26,7 @@ public class RatingImpService implements RatingService {
 
     @Override
     public Rating createRating(RatingRequest req, Users user) {
-        Product product = productService.findById(req.getProductId());
+        Product product = productService.findProductById(req.getProductId());
         Rating rating = new Rating();
         rating.setProduct(product);
         rating.setRating(req.getRating());

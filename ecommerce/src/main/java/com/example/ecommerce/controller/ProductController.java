@@ -1,14 +1,9 @@
 package com.example.ecommerce.controller;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import org.apache.catalina.connector.Response;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,10 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.ecommerce.model.Category;
 import com.example.ecommerce.model.Product;
 import com.example.ecommerce.request.CreateProductRequest;
-import com.example.ecommerce.services.ProductImpService;
+import com.example.ecommerce.services.implement.ProductImpService;
+import com.example.ecommerce.dto.ProductDto;
+
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -33,12 +30,12 @@ public class ProductController {
     }
 
     @GetMapping("/get-all")
-    public ResponseEntity<List<Product>> getAllProducts(){
+    public ResponseEntity<List<ProductDto>> getAllProducts(){
         return ResponseEntity.ok(productImpService.findAll());
     }
 
     @PostMapping("/create-product")
-    public ResponseEntity<Product> createProduct(@RequestBody CreateProductRequest req){
+    public ResponseEntity<ProductDto> createProduct(@Valid @RequestBody CreateProductRequest req){
         return ResponseEntity.ok(productImpService.createProduct(req));
     }
 
@@ -53,13 +50,14 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<Product> getProductById(@PathVariable String productId){
+    public ResponseEntity<ProductDto> getProductById(@PathVariable String productId){
         return ResponseEntity.ok(productImpService.findById(productId));
     }
 
     @PostMapping("/update/{productId}")
-    public ResponseEntity<Product> updateProductById(@PathVariable String productId, @RequestBody Product req){
-        return ResponseEntity.ok(productImpService.updateProduct(productId, req));
+    public ResponseEntity<ProductDto> updateProductById(@PathVariable String productId, @RequestBody Product req){
+        ProductDto updatedProduct = productImpService.updateProduct(productId, req);
+        return ResponseEntity.ok(updatedProduct);
     }
 
     // @GetMapping("/{id}")

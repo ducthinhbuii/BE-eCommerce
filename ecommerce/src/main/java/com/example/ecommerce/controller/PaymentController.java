@@ -72,7 +72,7 @@ public class PaymentController {
         vnpParamsMap.put("vnp_OrderInfo", "Thanh toan don hang:" +  Config.getRandomNumber(8));
         vnpParamsMap.put("vnp_OrderType", orderType);
         vnpParamsMap.put("vnp_Locale", "vn");
-        String returnUrl = Config.vnp_ReturnUrl + "/" + req.getOrderId();
+        String returnUrl = config.getvnp_ReturnUrl() + "/" + req.getOrderId();
         vnpParamsMap.put("vnp_ReturnUrl", returnUrl);
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");

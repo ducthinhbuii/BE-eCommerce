@@ -19,6 +19,8 @@ import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.example.ecommerce.request.VNPayRequest;
+
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -26,7 +28,9 @@ import jakarta.servlet.http.HttpServletRequest;
 @Component
 public class Config {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static String vnp_ReturnUrl = "http://localhost:5173/payment-info";
+
+    @Value("${VNP_RETURN_URL}")
+    private String vnp_ReturnUrl;
 
     @Value("${VNP_TMNCODE}")
     private String vnp_TmnCode;
@@ -43,6 +47,10 @@ public class Config {
     
     public String getSecretKey() {
         return secretKey;
+    }
+
+    public String getvnp_ReturnUrl() {
+        return vnp_ReturnUrl;
     }
     
     public static String md5(String message) {

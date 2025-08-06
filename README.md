@@ -164,7 +164,8 @@ java -jar target/ecommerce-0.0.1-SNAPSHOT.jar
 
 Once the application is running, you can access the API documentation at:
 
-- **Swagger UI**: http://localhost:8081/swagger-ui.html
+- **Default Redirect**: http://localhost:8081/ (automatically redirects to Swagger UI)
+- **Swagger UI**: http://localhost:8081/swagger-ui/index.html
 - **OpenAPI JSON**: http://localhost:8081/v3/api-docs
 
 ## 🔧 Development

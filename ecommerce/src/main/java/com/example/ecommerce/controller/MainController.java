@@ -6,21 +6,24 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 public class MainController {
     @Operation(
-        summary = "Hello World endpoint",
+        summary = "Default endpoint - redirects to Swagger UI",
         responses = {
             @ApiResponse(
-                responseCode = "200",
-                description = "Returns Hello World message"
+                responseCode = "302",
+                description = "Redirects to Swagger UI"
             )
         }
     )
     @GetMapping("/")
-    public String helloWorld(){
-        return "Hello World!";
+    public RedirectView redirectToSwagger(){
+        return new RedirectView("/swagger-ui/index.html");
     }
 
     @Operation(

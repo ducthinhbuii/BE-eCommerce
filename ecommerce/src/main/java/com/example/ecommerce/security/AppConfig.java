@@ -57,13 +57,14 @@ public class AppConfig{
                 .cors(c -> c.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth ->
                         auth
+                            .requestMatchers("/").permitAll()
                             .requestMatchers("/api/category/**").permitAll()
                             .requestMatchers("/api/product/**").permitAll()
                             .requestMatchers("/api/user/login").permitAll()
                             .requestMatchers("/api/user/register").permitAll()
                             .requestMatchers("/test").permitAll()
-                            .requestMatchers("/swagger-ui/index.html").permitAll()
-                            .requestMatchers("/swagger-ui.html").permitAll()
+                            .requestMatchers("/swagger-ui/**").permitAll()
+                            .requestMatchers("/v3/api-docs/**").permitAll()
                             .anyRequest().authenticated()
                             )
                 

@@ -18,7 +18,15 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 public class JWTService {
     private static final String SECRET_KEY = "thinh";
 
-    public String generateTokenLogin(String username){
+    public String generateTokenLogin(String username) {
+        Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes());
+        return JWT.create()
+                .withSubject(username)
+                .withExpiresAt(new Date(System.currentTimeMillis() + 1 * 60 * 1000))
+                .sign(algorithm);
+    }
+
+    public String generateRefreshTokenLogin(String username){
         Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes());
         return JWT.create()
                 .withSubject(username)

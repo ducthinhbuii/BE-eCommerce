@@ -39,6 +39,7 @@ import com.example.ecommerce.services.jwt.JWTService;
 import com.example.ecommerce.dto.AddressDto;
 import com.example.ecommerce.dto.UserDto;
 import com.example.ecommerce.exception.ResourceNotFoundException;
+import com.example.ecommerce.exception.UnauthorizedException;
 
 import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
@@ -78,18 +79,38 @@ public class UserController {
     )
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest user) {
-        System.out.println(user);
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
-        );
+        try {
+            System.out.println(user);
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+    
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+    
+            String jwt = jwtService.generateTokenLogin(user.getUsername());
+            String refreshToken = jwtService.generateRefreshTokenLogin(user.getUsername());
+            return ResponseEntity.ok(AuthenticationReponse.builder()
+                    .token(jwt)
+                    .refreshToken(refreshToken)
+                    .authenticated(true)
+                    .build());
+        } catch (Exception e) {
+            throw new UnauthorizedException(e.getMessage());
+        }
+    }
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String jwt = jwtService.generateTokenLogin(user.getUsername());
-        return ResponseEntity.ok(AuthenticationReponse.builder()
-                                    .token(jwt)
-                                    .authenticated(true)
-                                    .build());
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request) {
+        String refreshToken = request.get("refreshToken");
+        if (jwtService.validateJwtToken(refreshToken)) {
+            String username = jwtService.getUserNameFromJwtToken(refreshToken);
+            String newToken = jwtService.generateTokenLogin(username);
+            return ResponseEntity.ok(AuthenticationReponse.builder()
+                .token(newToken)
+                .authenticated(true)
+                .build());
+        } else {
+            throw new UnauthorizedException("Invalid refresh token");
+        }
     }
 
     @Operation(

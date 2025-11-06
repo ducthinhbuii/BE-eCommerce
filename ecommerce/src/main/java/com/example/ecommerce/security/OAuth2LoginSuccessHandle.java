@@ -36,7 +36,8 @@ public class OAuth2LoginSuccessHandle extends SavedRequestAwareAuthenticationSuc
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
         String jwt = jwtService.generateTokenLogin(email);
-        String redirectUrl = FE_URL + "oauth2-redirect?token=" + jwt;
+        String refreshToken = jwtService.generateRefreshTokenLogin(email);
+        String redirectUrl = FE_URL + "oauth2-redirect?token=" + jwt + "&refreshToken=" + refreshToken;
         response.sendRedirect(redirectUrl);
     }
     

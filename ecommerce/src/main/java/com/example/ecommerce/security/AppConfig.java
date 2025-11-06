@@ -61,6 +61,7 @@ public class AppConfig{
                             .requestMatchers("/api/category/**").permitAll()
                             .requestMatchers("/api/product/**").permitAll()
                             .requestMatchers("/api/user/login").permitAll()
+                            .requestMatchers("/api/user/refresh-token").permitAll()
                             .requestMatchers("/api/user/register").permitAll()
                             .requestMatchers("/test").permitAll()
                             .requestMatchers("/swagger-ui/**").permitAll()
